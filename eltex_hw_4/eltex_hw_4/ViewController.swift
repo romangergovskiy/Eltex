@@ -93,22 +93,15 @@ final class ViewController: UIViewController {
     }
     
     @objc func runTapped() {
-        outputTextView.text = ""
-        
-        func append(_ text: String) {
-            DispatchQueue.main.async {
-                self.outputTextView.text += text + "\n"
-                let range = NSRange(location: max(0, self.outputTextView.text.count - 1), length: 0)
-                self.outputTextView.scrollRangeToVisible(range)
-            }
-        }
-        
-        let trader = Trader(balance: 10000, currency: .usd)
-        let bot = TradingBot(trader: trader)
-        bot.onUpdate = append
-        
-        DispatchQueue.global().async {
-            bot.startTrading()
-        }
+    outputTextView.text = ""
+
+    let trader = Trader(balance: 10000, currency: .usd)
+    let bot = TradingBot(trader: trader)
+
+    bot.onUpdate = { message in
+        self.outputTextView.text += message + "\n"
     }
+
+    bot.startTrading()
+}
 }
