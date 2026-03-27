@@ -7,32 +7,32 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		DD728E9A2F72981F009C27FF /* eltex_hw_5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eltex_hw_5.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDF194DF2F765A32004F6699 /* eltex_hw_6.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eltex_hw_6.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		DD728EAC2F729821009C27FF /* Exceptions for "eltex_hw_5" folder in "eltex_hw_5" target */ = {
+		DDF194F12F765A34004F6699 /* Exceptions for "eltex_hw_6" folder in "eltex_hw_6" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = DD728E992F72981F009C27FF /* eltex_hw_5 */;
+			target = DDF194DE2F765A32004F6699 /* eltex_hw_6 */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DD728E9C2F72981F009C27FF /* eltex_hw_5 */ = {
+		DDF194E12F765A32004F6699 /* eltex_hw_6 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				DD728EAC2F729821009C27FF /* Exceptions for "eltex_hw_5" folder in "eltex_hw_5" target */,
+				DDF194F12F765A34004F6699 /* Exceptions for "eltex_hw_6" folder in "eltex_hw_6" target */,
 			);
-			path = eltex_hw_5;
+			path = eltex_hw_6;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		DD728E972F72981F009C27FF /* Frameworks */ = {
+		DDF194DC2F765A32004F6699 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -42,18 +42,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		DD728E912F72981F009C27FF = {
+		DDF194D62F765A32004F6699 = {
 			isa = PBXGroup;
 			children = (
-				DD728E9C2F72981F009C27FF /* eltex_hw_5 */,
-				DD728E9B2F72981F009C27FF /* Products */,
+				DDF194E12F765A32004F6699 /* eltex_hw_6 */,
+				DDF194E02F765A32004F6699 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		DD728E9B2F72981F009C27FF /* Products */ = {
+		DDF194E02F765A32004F6699 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DD728E9A2F72981F009C27FF /* eltex_hw_5.app */,
+				DDF194DF2F765A32004F6699 /* eltex_hw_6.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,64 +61,64 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DD728E992F72981F009C27FF /* eltex_hw_5 */ = {
+		DDF194DE2F765A32004F6699 /* eltex_hw_6 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DD728EAD2F729821009C27FF /* Build configuration list for PBXNativeTarget "eltex_hw_5" */;
+			buildConfigurationList = DDF194F22F765A34004F6699 /* Build configuration list for PBXNativeTarget "eltex_hw_6" */;
 			buildPhases = (
-				DD728E962F72981F009C27FF /* Sources */,
-				DD728E972F72981F009C27FF /* Frameworks */,
-				DD728E982F72981F009C27FF /* Resources */,
+				DDF194DB2F765A32004F6699 /* Sources */,
+				DDF194DC2F765A32004F6699 /* Frameworks */,
+				DDF194DD2F765A32004F6699 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DD728E9C2F72981F009C27FF /* eltex_hw_5 */,
+				DDF194E12F765A32004F6699 /* eltex_hw_6 */,
 			);
-			name = eltex_hw_5;
+			name = eltex_hw_6;
 			packageProductDependencies = (
 			);
-			productName = eltex_hw_5;
-			productReference = DD728E9A2F72981F009C27FF /* eltex_hw_5.app */;
+			productName = eltex_hw_6;
+			productReference = DDF194DF2F765A32004F6699 /* eltex_hw_6.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		DD728E922F72981F009C27FF /* Project object */ = {
+		DDF194D72F765A32004F6699 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
-					DD728E992F72981F009C27FF = {
+					DDF194DE2F765A32004F6699 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
 			};
-			buildConfigurationList = DD728E952F72981F009C27FF /* Build configuration list for PBXProject "eltex_hw_5" */;
+			buildConfigurationList = DDF194DA2F765A32004F6699 /* Build configuration list for PBXProject "eltex_hw_6" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = DD728E912F72981F009C27FF;
+			mainGroup = DDF194D62F765A32004F6699;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = DD728E9B2F72981F009C27FF /* Products */;
+			productRefGroup = DDF194E02F765A32004F6699 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DD728E992F72981F009C27FF /* eltex_hw_5 */,
+				DDF194DE2F765A32004F6699 /* eltex_hw_6 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		DD728E982F72981F009C27FF /* Resources */ = {
+		DDF194DD2F765A32004F6699 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -128,7 +128,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		DD728E962F72981F009C27FF /* Sources */ = {
+		DDF194DB2F765A32004F6699 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -138,15 +138,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		DD728EAE2F729821009C27FF /* Debug */ = {
+		DDF194F32F765A34004F6699 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V95A42AD6Z;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = eltex_hw_5/Info.plist;
+				INFOPLIST_FILE = eltex_hw_6/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -158,7 +159,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-5";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-6";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -170,15 +171,16 @@
 			};
 			name = Debug;
 		};
-		DD728EAF2F729821009C27FF /* Release */ = {
+		DDF194F42F765A34004F6699 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V95A42AD6Z;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = eltex_hw_5/Info.plist;
+				INFOPLIST_FILE = eltex_hw_6/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -190,7 +192,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-5";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-6";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -202,7 +204,7 @@
 			};
 			name = Release;
 		};
-		DD728EB02F729821009C27FF /* Debug */ = {
+		DDF194F52F765A34004F6699 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -237,6 +239,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = V95A42AD6Z;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -265,7 +268,7 @@
 			};
 			name = Debug;
 		};
-		DD728EB12F729821009C27FF /* Release */ = {
+		DDF194F62F765A34004F6699 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -300,6 +303,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = V95A42AD6Z;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -324,25 +328,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DD728E952F72981F009C27FF /* Build configuration list for PBXProject "eltex_hw_5" */ = {
+		DDF194DA2F765A32004F6699 /* Build configuration list for PBXProject "eltex_hw_6" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD728EB02F729821009C27FF /* Debug */,
-				DD728EB12F729821009C27FF /* Release */,
+				DDF194F52F765A34004F6699 /* Debug */,
+				DDF194F62F765A34004F6699 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD728EAD2F729821009C27FF /* Build configuration list for PBXNativeTarget "eltex_hw_5" */ = {
+		DDF194F22F765A34004F6699 /* Build configuration list for PBXNativeTarget "eltex_hw_6" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD728EAE2F729821009C27FF /* Debug */,
-				DD728EAF2F729821009C27FF /* Release */,
+				DDF194F32F765A34004F6699 /* Debug */,
+				DDF194F42F765A34004F6699 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = DD728E922F72981F009C27FF /* Project object */;
+	rootObject = DDF194D72F765A32004F6699 /* Project object */;
 }

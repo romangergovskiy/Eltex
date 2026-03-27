@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  eltex_hw_5
+//  eltex_hw_6
 //
-//  Created by Роман Герговский on 24.03.2026.
+//  Created by Роман Герговский on 27.03.2026.
 //
 
 import UIKit
