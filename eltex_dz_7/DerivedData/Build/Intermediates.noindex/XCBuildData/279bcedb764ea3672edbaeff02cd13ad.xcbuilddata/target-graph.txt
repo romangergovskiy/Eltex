@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'eltex_dz_7' in project 'eltex_dz_7' (no dependencies)
