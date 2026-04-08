@@ -7,32 +7,32 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		DD6B86502F7F53C500BB947F /* eltex_dz_8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eltex_dz_8.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD0732712F8657DA00FD1E77 /* eltex_hw_9.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eltex_hw_9.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		DD6B86622F7F53C800BB947F /* Exceptions for "eltex_dz_8" folder in "eltex_dz_8" target */ = {
+		DD0732832F8657DC00FD1E77 /* Exceptions for "eltex_hw_9" folder in "eltex_hw_9" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = DD6B864F2F7F53C500BB947F /* eltex_dz_8 */;
+			target = DD0732702F8657DA00FD1E77 /* eltex_hw_9 */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DD6B86522F7F53C500BB947F /* eltex_dz_8 */ = {
+		DD0732732F8657DA00FD1E77 /* eltex_hw_9 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				DD6B86622F7F53C800BB947F /* Exceptions for "eltex_dz_8" folder in "eltex_dz_8" target */,
+				DD0732832F8657DC00FD1E77 /* Exceptions for "eltex_hw_9" folder in "eltex_hw_9" target */,
 			);
-			path = eltex_dz_8;
+			path = eltex_hw_9;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		DD6B864D2F7F53C500BB947F /* Frameworks */ = {
+		DD07326E2F8657DA00FD1E77 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -42,18 +42,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		DD6B86472F7F53C500BB947F = {
+		DD0732682F8657DA00FD1E77 = {
 			isa = PBXGroup;
 			children = (
-				DD6B86522F7F53C500BB947F /* eltex_dz_8 */,
-				DD6B86512F7F53C500BB947F /* Products */,
+				DD0732732F8657DA00FD1E77 /* eltex_hw_9 */,
+				DD0732722F8657DA00FD1E77 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		DD6B86512F7F53C500BB947F /* Products */ = {
+		DD0732722F8657DA00FD1E77 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DD6B86502F7F53C500BB947F /* eltex_dz_8.app */,
+				DD0732712F8657DA00FD1E77 /* eltex_hw_9.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,64 +61,64 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DD6B864F2F7F53C500BB947F /* eltex_dz_8 */ = {
+		DD0732702F8657DA00FD1E77 /* eltex_hw_9 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DD6B86632F7F53C800BB947F /* Build configuration list for PBXNativeTarget "eltex_dz_8" */;
+			buildConfigurationList = DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hw_9" */;
 			buildPhases = (
-				DD6B864C2F7F53C500BB947F /* Sources */,
-				DD6B864D2F7F53C500BB947F /* Frameworks */,
-				DD6B864E2F7F53C500BB947F /* Resources */,
+				DD07326D2F8657DA00FD1E77 /* Sources */,
+				DD07326E2F8657DA00FD1E77 /* Frameworks */,
+				DD07326F2F8657DA00FD1E77 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DD6B86522F7F53C500BB947F /* eltex_dz_8 */,
+				DD0732732F8657DA00FD1E77 /* eltex_hw_9 */,
 			);
-			name = eltex_dz_8;
+			name = eltex_hw_9;
 			packageProductDependencies = (
 			);
-			productName = eltex_dz_8;
-			productReference = DD6B86502F7F53C500BB947F /* eltex_dz_8.app */;
+			productName = eltex_hw_9;
+			productReference = DD0732712F8657DA00FD1E77 /* eltex_hw_9.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		DD6B86482F7F53C500BB947F /* Project object */ = {
+		DD0732692F8657DA00FD1E77 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
-					DD6B864F2F7F53C500BB947F = {
+					DD0732702F8657DA00FD1E77 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
 			};
-			buildConfigurationList = DD6B864B2F7F53C500BB947F /* Build configuration list for PBXProject "eltex_dz_8" */;
+			buildConfigurationList = DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "eltex_hw_9" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = DD6B86472F7F53C500BB947F;
+			mainGroup = DD0732682F8657DA00FD1E77;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = DD6B86512F7F53C500BB947F /* Products */;
+			productRefGroup = DD0732722F8657DA00FD1E77 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DD6B864F2F7F53C500BB947F /* eltex_dz_8 */,
+				DD0732702F8657DA00FD1E77 /* eltex_hw_9 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		DD6B864E2F7F53C500BB947F /* Resources */ = {
+		DD07326F2F8657DA00FD1E77 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -128,7 +128,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		DD6B864C2F7F53C500BB947F /* Sources */ = {
+		DD07326D2F8657DA00FD1E77 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -138,7 +138,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		DD6B86642F7F53C800BB947F /* Debug */ = {
+		DD0732852F8657DC00FD1E77 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -147,10 +147,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V95A42AD6Z;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = eltex_dz_8/Info.plist;
+				INFOPLIST_FILE = eltex_hw_9/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -159,7 +158,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-dz-8";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-9";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -171,7 +170,7 @@
 			};
 			name = Debug;
 		};
-		DD6B86652F7F53C800BB947F /* Release */ = {
+		DD0732862F8657DC00FD1E77 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -180,10 +179,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V95A42AD6Z;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = eltex_dz_8/Info.plist;
+				INFOPLIST_FILE = eltex_hw_9/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -192,7 +190,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-dz-8";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-9";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -204,7 +202,7 @@
 			};
 			name = Release;
 		};
-		DD6B86662F7F53C800BB947F /* Debug */ = {
+		DD0732872F8657DC00FD1E77 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -268,7 +266,7 @@
 			};
 			name = Debug;
 		};
-		DD6B86672F7F53C800BB947F /* Release */ = {
+		DD0732882F8657DC00FD1E77 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -328,25 +326,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DD6B864B2F7F53C500BB947F /* Build configuration list for PBXProject "eltex_dz_8" */ = {
+		DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "eltex_hw_9" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD6B86662F7F53C800BB947F /* Debug */,
-				DD6B86672F7F53C800BB947F /* Release */,
+				DD0732872F8657DC00FD1E77 /* Debug */,
+				DD0732882F8657DC00FD1E77 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD6B86632F7F53C800BB947F /* Build configuration list for PBXNativeTarget "eltex_dz_8" */ = {
+		DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hw_9" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD6B86642F7F53C800BB947F /* Debug */,
-				DD6B86652F7F53C800BB947F /* Release */,
+				DD0732852F8657DC00FD1E77 /* Debug */,
+				DD0732862F8657DC00FD1E77 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = DD6B86482F7F53C500BB947F /* Project object */;
+	rootObject = DD0732692F8657DA00FD1E77 /* Project object */;
 }

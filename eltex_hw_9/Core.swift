@@ -1,10 +1,3 @@
-//
-//  Core.swift
-//  eltex_dz_8
-//
-//  Created by Роман Герговский on 03.04.2026.
-//
-
 import Foundation
 
 // MARK: - Trading

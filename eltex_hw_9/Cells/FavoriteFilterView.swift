@@ -1,10 +1,3 @@
-//
-//  FavoriteFilterView.swift
-//  eltex_dz_8
-//
-//  Created by Роман Герговский on 03.04.2026.
-//
-
 import UIKit
 
 // MARK: - FavoriteFilterViewDelegate
@@ -20,6 +13,10 @@ final class FavoriteFilterView: UIView {
 
     var isEnabled: Bool {
         filterSwitch.isOn
+    }
+
+    func setEnabled(_ value: Bool) {
+        filterSwitch.setOn(value, animated: false)
     }
 
     private let titleLabel: UILabel = {
