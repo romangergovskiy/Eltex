@@ -51,7 +51,7 @@ final class CurrencyPairsViewController: UIViewController {
     private let compactHintLabel = UILabel()
     private let allButton = UIButton(type: .system)
 
-    // full mode (dz8-like header)
+    // full mode
     private let fullHeaderView = UIView()
     private let fullFirstCurrencyLabel = UILabel()
     private let fullSecondCurrencyLabel = UILabel()
