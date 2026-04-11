@@ -40,40 +40,58 @@ final class TradeTableViewCell: UITableViewCell {
 
     func configure(with trade: TradeRecord) {
         titleLabel.text = "#\(trade.index) • \(trade.action.title)"
+
         switch trade.action {
         case .buy:
-            setupActionStyle(titleColor: .systemGreen, cardColor: UIColor.systemGreen.withAlphaComponent(0.12), trade: trade)
+            configureTradeAction(
+                titleColor: .systemGreen,
+                cardColor: UIColor.systemGreen.withAlphaComponent(0.14),
+                trade: trade
+            )
         case .sell:
-            setupActionStyle(titleColor: .systemRed, cardColor: UIColor.systemRed.withAlphaComponent(0.12), trade: trade)
+            configureTradeAction(
+                titleColor: .systemRed,
+                cardColor: UIColor.systemRed.withAlphaComponent(0.14),
+                trade: trade
+            )
         case .ignore:
-            titleLabel.textColor = .systemYellow
-            cardView.backgroundColor = UIColor.systemYellow.withAlphaComponent(0.15)
-            priceLabel.isHidden = true
-            detailsContainer.isHidden = true
-            priceLabel.text = nil
-            resultLabel.text = nil
-            balanceLabel.text = nil
+            configureIgnoreAction()
         }
 
-        if let result = trade.tradeResult {
-            detailsContainer.isHidden = false
-            resultLabel.text = "Результат: \(formattedResult(result))"
-            balanceLabel.text = "Баланс: \(trade.balanceAfter.formatted)"
-        } else {
-            detailsContainer.isHidden = true
-        }
+        configureDetails(for: trade)
     }
 }
 
 // MARK: - Private
 private extension TradeTableViewCell {
 
-    func setupActionStyle(titleColor: UIColor, cardColor: UIColor, trade: TradeRecord) {
+    func configureTradeAction(titleColor: UIColor, cardColor: UIColor, trade: TradeRecord) {
         titleLabel.textColor = titleColor
         cardView.backgroundColor = cardColor
         priceLabel.isHidden = false
         detailsContainer.isHidden = false
         priceLabel.text = "Цена: \(trade.previousPrice.formatted) → \(trade.currentPrice.formatted)"
+    }
+
+    func configureIgnoreAction() {
+        titleLabel.textColor = .systemYellow
+        cardView.backgroundColor = UIColor.systemYellow.withAlphaComponent(0.18)
+        priceLabel.isHidden = true
+        detailsContainer.isHidden = true
+        priceLabel.text = nil
+        resultLabel.text = nil
+        balanceLabel.text = nil
+    }
+
+    func configureDetails(for trade: TradeRecord) {
+        guard let result = trade.tradeResult else {
+            detailsContainer.isHidden = true
+            return
+        }
+
+        detailsContainer.isHidden = false
+        resultLabel.text = "Результат: \(formattedResult(result))"
+        balanceLabel.text = "Баланс: \(trade.balanceAfter.formatted)"
     }
 
     func formattedResult(_ value: Double) -> String {
@@ -97,12 +115,17 @@ private extension TradeTableViewCell {
         detailsContainer.addSubview(resultLabel)
         detailsContainer.addSubview(balanceLabel)
 
-        cardView.layer.cornerRadius = 12
+        cardView.layer.cornerRadius = 14
+        cardView.layer.borderWidth = 1
+        cardView.layer.borderColor = UIColor.white.withAlphaComponent(0.08).cgColor
 
         titleLabel.font = .systemFont(ofSize: 16, weight: .bold)
         priceLabel.font = .systemFont(ofSize: 14, weight: .regular)
-        resultLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        balanceLabel.font = .systemFont(ofSize: 14, weight: .regular)
+        resultLabel.font = .systemFont(ofSize: 14, weight: .semibold)
+        balanceLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        priceLabel.textColor = .label
+        resultLabel.textColor = .label
+        balanceLabel.textColor = .secondaryLabel
 
         NSLayoutConstraint.activate([
             cardView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),

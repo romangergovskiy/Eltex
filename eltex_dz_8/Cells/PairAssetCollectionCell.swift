@@ -24,6 +24,7 @@ final class PairAssetCollectionCell: UICollectionViewCell {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .boldSystemFont(ofSize: 15)
+        label.textColor = .white
         return label
     }()
 
@@ -65,16 +66,18 @@ final class PairAssetCollectionCell: UICollectionViewCell {
         codeLabel.text = asset.code
 
         if isDisabled {
-            contentView.backgroundColor = .systemGray3
-            codeLabel.textColor = .systemGray
+            contentView.backgroundColor = UIColor.systemGray.withAlphaComponent(0.24)
+            codeLabel.textColor = .systemGray2
             contentView.layer.borderWidth = 0
             return
         }
 
-        codeLabel.textColor = .black
-        contentView.backgroundColor = isSelectedPair ? .systemGreen : .lightGray
+        codeLabel.textColor = .white
+        contentView.backgroundColor = isSelectedPair
+            ? UIColor.systemTeal.withAlphaComponent(0.45)
+            : UIColor(red: 0.18, green: 0.24, blue: 0.36, alpha: 1)
         contentView.layer.borderWidth = isSelectedPair ? 2 : 0
-        contentView.layer.borderColor = isSelectedPair ? UIColor.systemBlue.cgColor : nil
+        contentView.layer.borderColor = isSelectedPair ? UIColor.systemTeal.cgColor : nil
     }
 
     // MARK: - Private
@@ -82,6 +85,7 @@ final class PairAssetCollectionCell: UICollectionViewCell {
     private func setupUI() {
         contentView.layer.cornerRadius = 12
         contentView.clipsToBounds = true
+        contentView.layer.borderColor = UIColor.clear.cgColor
 
         codeLabel.translatesAutoresizingMaskIntoConstraints = false
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
