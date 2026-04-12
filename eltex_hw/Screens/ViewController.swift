@@ -19,12 +19,13 @@ final class ViewController: UIViewController {
     private var isFirstRun = true
     private var greetingText = ""
     private var trades: [TradeRecord] = []
+    private lazy var tradingBot = TradingBot(trader: Trader(balance: 10000, currency: .usd))
 
     private let allAssets = PairAssetFactory.makeList(minCount: 140)
     private let defaultFirstCode = "USD"
     private let defaultSecondCode = "BTC"
-    private var firstAsset: PairAsset!
-    private var secondAsset: PairAsset!
+    private var firstAsset: PairAsset = PairAsset(code: "USD", category: .fiat)
+    private var secondAsset: PairAsset = PairAsset(code: "BTC", category: .crypto)
 
     // MARK: - Lifecycle
 
@@ -47,11 +48,8 @@ private extension ViewController {
     }
 
     func setupUI() {
-        [headerImageView, containerView, filterStack, runButton, pairSelectionView, pairTitleLabel, pairValueLabel, pairHintLabel, pairChevronImageView, botSwitch, tableView, emptyStateLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-
-        view.backgroundColor = .darkGray
+        setupAutoresizingMasks()
+        view.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
 
         setupHeader()
         setupContainer()
@@ -63,6 +61,12 @@ private extension ViewController {
 
         addSubviews()
         makeConstraints()
+    }
+
+    func setupAutoresizingMasks() {
+        [headerImageView, containerView, filterStack, runButton, pairSelectionView, pairTitleLabel, pairValueLabel, pairHintLabel, pairChevronImageView, botSwitch, tableView, emptyStateLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
     }
 
     func setupNavigationBar() {
@@ -83,13 +87,13 @@ private extension ViewController {
     func setupHeader() {
         headerImageView.contentMode = .scaleAspectFill
         headerImageView.clipsToBounds = true
-        headerImageView.layer.cornerRadius = 10
+        headerImageView.layer.cornerRadius = 18
         headerImageView.image = UIImage(named: "fordz")
     }
 
     func setupContainer() {
-        containerView.backgroundColor = UIColor(white: 0.95, alpha: 1)
-        containerView.layer.cornerRadius = 10
+        containerView.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
+        containerView.layer.cornerRadius = 18
     }
 
     func setupFilter() {
@@ -100,39 +104,41 @@ private extension ViewController {
 
         let titleLabel = UILabel()
         titleLabel.text = "Торговый бот"
-        titleLabel.textColor = .black
+        titleLabel.textColor = .white
         titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
 
         filterStack.addArrangedSubview(titleLabel)
         filterStack.addArrangedSubview(UIView())
         filterStack.addArrangedSubview(botSwitch)
+        botSwitch.onTintColor = .systemTeal
     }
 
     func setupRunButton() {
         runButton.setTitle("Начать торговлю", for: .normal)
-        runButton.setTitleColor(.black, for: .normal)
-        runButton.backgroundColor = .systemBlue
+        runButton.setTitleColor(.white, for: .normal)
+        runButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        runButton.backgroundColor = UIColor(red: 0.19, green: 0.48, blue: 0.96, alpha: 1)
         runButton.layer.cornerRadius = 12
         runButton.addTarget(self, action: #selector(runTapped), for: .touchUpInside)
     }
 
     func setupPairSelection() {
-        pairSelectionView.backgroundColor = .systemGreen
+        pairSelectionView.backgroundColor = UIColor(red: 0.22, green: 0.72, blue: 0.55, alpha: 1)
         pairSelectionView.layer.cornerRadius = 12
         pairSelectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pairSelectionTapped)))
 
         pairTitleLabel.text = "Текущая валютная пара"
         pairTitleLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        pairTitleLabel.textColor = .black
+        pairTitleLabel.textColor = .white
 
         pairValueLabel.font = .systemFont(ofSize: 20, weight: .bold)
-        pairValueLabel.textColor = .black
+        pairValueLabel.textColor = .white
 
         pairHintLabel.text = "Нажмите, чтобы выбрать"
         pairHintLabel.font = .systemFont(ofSize: 12, weight: .regular)
-        pairHintLabel.textColor = .darkGray
+        pairHintLabel.textColor = .white
 
-        pairChevronImageView.tintColor = .black
+        pairChevronImageView.tintColor = .white
 
         pairSelectionView.addSubview(pairTitleLabel)
         pairSelectionView.addSubview(pairValueLabel)
@@ -145,11 +151,13 @@ private extension ViewController {
             TradeTableViewCell.self,
             forCellReuseIdentifier: TradeTableViewCell.reuseIdentifier
         )
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "GreetingCell")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.backgroundColor = .clear
         tableView.showsVerticalScrollIndicator = true
+        tableView.sectionHeaderTopPadding = 8
     }
 
     func setupEmptyState() {
@@ -231,11 +239,9 @@ private extension ViewController {
 private extension ViewController {
 
     @objc func runTapped() {
-        let trader = Trader(balance: 10000, currency: .usd)
-        let bot = TradingBot(trader: trader)
-
-        greetingText = "\(bot.greeting())\nПара: \(firstAsset.code)-\(secondAsset.code)"
-        trades = bot.generateHistory(count: 40)
+        tradingBot.resetSession()
+        greetingText = "\(tradingBot.greeting())\nПара: \(firstAsset.code)-\(secondAsset.code)"
+        trades = tradingBot.generateHistory(count: 40)
         isFirstRun = false
 
         updateEmptyState()
@@ -312,7 +318,7 @@ private extension ViewController {
 extension ViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        2
+        return 2
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -339,12 +345,14 @@ extension ViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: "GreetingCell")
+            let cell = tableView.dequeueReusableCell(withIdentifier: "GreetingCell", for: indexPath)
             cell.textLabel?.text = greetingText
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.font = .systemFont(ofSize: 16)
             cell.textLabel?.textAlignment = .center
-            cell.backgroundColor = .systemGray6
+            cell.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
+            cell.textLabel?.textColor = .white
+            cell.selectionStyle = .none
             return cell
         }
 

@@ -65,7 +65,22 @@ final class CurrencyPairsViewController: UIViewController {
     private let favoriteFilterView = FavoriteFilterView()
     private let filterSegmentControl = UISegmentedControl(items: ["Все", "Фиат", "Крипта"])
     private let emptyStateLabel = UILabel()
-    private var collectionView: UICollectionView!
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = .clear
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(PairAssetCollectionCell.self, forCellWithReuseIdentifier: PairAssetCollectionCell.reuseIdentifier)
+        collectionView.showsVerticalScrollIndicator = false
+        return collectionView
+    }()
 
     private var pairRate: Double = 1000.0
     private var updateTimer: Timer?
@@ -109,6 +124,19 @@ final class CurrencyPairsViewController: UIViewController {
         }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        updateTimer?.invalidate()
+        updateTimer = nil
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if mode == .full {
+            startPriceTimer()
+        }
+    }
+
     deinit {
         updateTimer?.invalidate()
     }
@@ -117,7 +145,7 @@ final class CurrencyPairsViewController: UIViewController {
 private extension CurrencyPairsViewController {
 
     func setupUI() {
-        view.backgroundColor = .darkGray
+        view.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
         title = mode == .compact ? "Быстрый выбор пары" : "Все валюты"
 
         setupCompactUI()
@@ -134,13 +162,13 @@ private extension CurrencyPairsViewController {
 
     func setupCompactUI() {
         compactPairContainerView.translatesAutoresizingMaskIntoConstraints = false
-        compactPairContainerView.backgroundColor = .lightGray
+        compactPairContainerView.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
         compactPairContainerView.layer.cornerRadius = 12
 
         [compactFirstCurrencyButton, compactSecondCurrencyButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.tintColor = .black
-            $0.backgroundColor = .white
+            $0.setTitleColor(.white, for: .normal)
+            $0.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
             $0.layer.cornerRadius = 10
             $0.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
         }
@@ -155,8 +183,8 @@ private extension CurrencyPairsViewController {
 
         allButton.translatesAutoresizingMaskIntoConstraints = false
         allButton.setTitle("Все", for: .normal)
-        allButton.setTitleColor(.black, for: .normal)
-        allButton.backgroundColor = .systemBlue
+        allButton.setTitleColor(.white, for: .normal)
+        allButton.backgroundColor = UIColor(red: 0.19, green: 0.48, blue: 0.96, alpha: 1)
         allButton.layer.cornerRadius = 10
         allButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         allButton.addTarget(self, action: #selector(allButtonTapped), for: .touchUpInside)
@@ -167,8 +195,8 @@ private extension CurrencyPairsViewController {
 
     func setupFullHeaderUI() {
         fullHeaderView.translatesAutoresizingMaskIntoConstraints = false
-        fullHeaderView.backgroundColor = .lightGray
-        fullHeaderView.layer.cornerRadius = 10
+        fullHeaderView.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
+        fullHeaderView.layer.cornerRadius = 16
 
         [fullFirstCurrencyLabel, fullSecondCurrencyLabel, rateLabel, amountTextField, resultLabel, timerLabel, timerProgressView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -176,64 +204,74 @@ private extension CurrencyPairsViewController {
 
         fullFirstCurrencyLabel.textAlignment = .center
         fullFirstCurrencyLabel.font = .systemFont(ofSize: 18, weight: .medium)
-        fullFirstCurrencyLabel.backgroundColor = .white
+        fullFirstCurrencyLabel.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
         fullFirstCurrencyLabel.layer.cornerRadius = 8
         fullFirstCurrencyLabel.clipsToBounds = true
+        fullFirstCurrencyLabel.textColor = .white
         fullFirstCurrencyLabel.isUserInteractionEnabled = true
         fullFirstCurrencyLabel.tag = 0
         fullFirstCurrencyLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(selectedCurrencyTapped(_:))))
 
         fullSecondCurrencyLabel.textAlignment = .center
         fullSecondCurrencyLabel.font = .systemFont(ofSize: 18, weight: .medium)
-        fullSecondCurrencyLabel.backgroundColor = .white
+        fullSecondCurrencyLabel.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
         fullSecondCurrencyLabel.layer.cornerRadius = 8
         fullSecondCurrencyLabel.clipsToBounds = true
+        fullSecondCurrencyLabel.textColor = .white
         fullSecondCurrencyLabel.isUserInteractionEnabled = true
         fullSecondCurrencyLabel.tag = 1
         fullSecondCurrencyLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(selectedCurrencyTapped(_:))))
 
         rateLabel.textAlignment = .center
         rateLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        rateLabel.backgroundColor = .white
+        rateLabel.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
         rateLabel.layer.cornerRadius = 8
         rateLabel.clipsToBounds = true
-        rateLabel.textColor = .black
+        rateLabel.textColor = .white
 
         amountTextField.placeholder = "Введите сумму"
         amountTextField.borderStyle = .roundedRect
         amountTextField.keyboardType = .decimalPad
-        amountTextField.backgroundColor = .white
+        amountTextField.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
+        amountTextField.textColor = .white
+        amountTextField.attributedPlaceholder = NSAttributedString(
+            string: "Введите сумму",
+            attributes: [.foregroundColor: UIColor.systemGray]
+        )
+        amountTextField.delegate = self
         amountTextField.addTarget(self, action: #selector(amountChanged), for: .editingChanged)
 
         resultLabel.textAlignment = .center
-        resultLabel.backgroundColor = .white
+        resultLabel.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
         resultLabel.layer.cornerRadius = 8
         resultLabel.clipsToBounds = true
         resultLabel.font = .systemFont(ofSize: 14)
+        resultLabel.textColor = .white
         resultLabel.text = "Получите: 0"
 
         timerLabel.textAlignment = .center
-        timerLabel.backgroundColor = .white
+        timerLabel.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
         timerLabel.layer.cornerRadius = 8
         timerLabel.clipsToBounds = true
         timerLabel.font = .systemFont(ofSize: 12)
+        timerLabel.textColor = .white
         timerLabel.text = "Обновление: 5с"
 
         timerProgressView.progress = 0
-        timerProgressView.progressTintColor = .systemBlue
-        timerProgressView.trackTintColor = .systemGray4
+        timerProgressView.progressTintColor = .systemTeal
+        timerProgressView.trackTintColor = .systemGray
 
         let firstHintLabel = UILabel()
         firstHintLabel.translatesAutoresizingMaskIntoConstraints = false
         firstHintLabel.text = "Из какой:"
         firstHintLabel.font = .systemFont(ofSize: 16)
-        firstHintLabel.textColor = .black
+        firstHintLabel.textColor = .white
 
         let secondHintLabel = UILabel()
         secondHintLabel.translatesAutoresizingMaskIntoConstraints = false
         secondHintLabel.text = "В какую:"
         secondHintLabel.font = .systemFont(ofSize: 16)
-        secondHintLabel.textColor = .black
+        secondHintLabel.textColor = .white
 
         fullHeaderView.addSubview(firstHintLabel)
         fullHeaderView.addSubview(secondHintLabel)
@@ -301,22 +339,16 @@ private extension CurrencyPairsViewController {
     func setupFilterControl() {
         filterSegmentControl.translatesAutoresizingMaskIntoConstraints = false
         filterSegmentControl.selectedSegmentIndex = PairAssetFilter.all.rawValue
+        filterSegmentControl.selectedSegmentTintColor = .systemTeal
+        filterSegmentControl.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
+        filterSegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
+        filterSegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
         filterSegmentControl.addTarget(self, action: #selector(filterChanged), for: .valueChanged)
     }
 
     func setupCollectionView() {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .clear
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(PairAssetCollectionCell.self, forCellWithReuseIdentifier: PairAssetCollectionCell.reuseIdentifier)
+        collectionView.layer.cornerRadius = 16
+        collectionView.backgroundColor = UIColor(red: 0.1, green: 0.14, blue: 0.24, alpha: 1)
     }
 
     func setupEmptyStateLabel() {
@@ -332,6 +364,8 @@ private extension CurrencyPairsViewController {
     func setupKeyboardAccessory() {
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
+        toolbar.barTintColor = UIColor(red: 0.1, green: 0.14, blue: 0.24, alpha: 1)
+        toolbar.tintColor = .white
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped))
         toolbar.items = [UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil), doneButton]
         amountTextField.inputAccessoryView = toolbar
@@ -458,6 +492,11 @@ private extension CurrencyPairsViewController {
     }
 
     @objc func amountChanged() {
+        if let text = amountTextField.text, text.contains("-") || text.contains("−") {
+            amountTextField.text = text
+                .replacingOccurrences(of: "-", with: "")
+                .replacingOccurrences(of: "−", with: "")
+        }
         refreshConvertedAmount()
     }
 
@@ -530,24 +569,24 @@ private extension CurrencyPairsViewController {
 
         if selectedSide == .first {
             compactFirstCurrencyButton.layer.borderWidth = 2
-            compactFirstCurrencyButton.layer.borderColor = UIColor.systemBlue.cgColor
+            compactFirstCurrencyButton.layer.borderColor = UIColor.systemTeal.cgColor
             compactSecondCurrencyButton.layer.borderWidth = 0
 
             fullFirstCurrencyLabel.layer.borderWidth = 2
-            fullFirstCurrencyLabel.layer.borderColor = UIColor.systemBlue.cgColor
-            fullFirstCurrencyLabel.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+            fullFirstCurrencyLabel.layer.borderColor = UIColor.systemTeal.cgColor
+            fullFirstCurrencyLabel.backgroundColor = UIColor.systemTeal.withAlphaComponent(0.25)
             fullSecondCurrencyLabel.layer.borderWidth = 0
-            fullSecondCurrencyLabel.backgroundColor = .white
+            fullSecondCurrencyLabel.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
         } else {
             compactSecondCurrencyButton.layer.borderWidth = 2
-            compactSecondCurrencyButton.layer.borderColor = UIColor.systemBlue.cgColor
+            compactSecondCurrencyButton.layer.borderColor = UIColor.systemTeal.cgColor
             compactFirstCurrencyButton.layer.borderWidth = 0
 
             fullSecondCurrencyLabel.layer.borderWidth = 2
-            fullSecondCurrencyLabel.layer.borderColor = UIColor.systemBlue.cgColor
-            fullSecondCurrencyLabel.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+            fullSecondCurrencyLabel.layer.borderColor = UIColor.systemTeal.cgColor
+            fullSecondCurrencyLabel.backgroundColor = UIColor.systemTeal.withAlphaComponent(0.25)
             fullFirstCurrencyLabel.layer.borderWidth = 0
-            fullFirstCurrencyLabel.backgroundColor = .white
+            fullFirstCurrencyLabel.backgroundColor = UIColor(red: 0.16, green: 0.23, blue: 0.35, alpha: 1)
         }
         collectionView.reloadData()
     }
@@ -618,7 +657,9 @@ private extension CurrencyPairsViewController {
         secondsLeft = updatePeriod
         timerLabel.text = "Обновление: \(secondsLeft)с"
         timerProgressView.progress = 0
-        updateTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerTick), userInfo: nil, repeats: true)
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.timerTick()
+        }
     }
 
     func loadFavorites() {
@@ -696,5 +737,14 @@ extension CurrencyPairsViewController: FavoriteFilterViewDelegate {
     func favoriteFilterView(_ view: FavoriteFilterView, didChangeState isEnabled: Bool) {
         isFavoriteFilterEnabled = isEnabled
         applySelectedFiltersAndReload()
+    }
+}
+
+extension CurrencyPairsViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if string.contains("-") || string.contains("−") {
+            return false
+        }
+        return true
     }
 }

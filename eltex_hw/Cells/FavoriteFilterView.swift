@@ -23,7 +23,7 @@ final class FavoriteFilterView: UIView {
         let label = UILabel()
         label.text = "Только избранное"
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textColor = .black
+        label.textColor = .white
         return label
     }()
 
@@ -41,8 +41,8 @@ final class FavoriteFilterView: UIView {
     // MARK: - Private
 
     private func setupUI() {
-        backgroundColor = .white
-        layer.cornerRadius = 8
+        backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
+        layer.cornerRadius = 12
         translatesAutoresizingMaskIntoConstraints = false
 
         [titleLabel, filterSwitch].forEach {
@@ -50,6 +50,7 @@ final class FavoriteFilterView: UIView {
             addSubview($0)
         }
 
+        filterSwitch.onTintColor = .systemTeal
         filterSwitch.addTarget(self, action: #selector(switchChanged), for: .valueChanged)
 
         NSLayoutConstraint.activate([

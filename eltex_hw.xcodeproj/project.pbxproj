@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		DD0732712F8657DA00FD1E77 /* eltex_hw_9.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eltex_hw_9.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD0732712F8657DA00FD1E77 /* eltex_hw.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eltex_hw.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		DD0732832F8657DC00FD1E77 /* Exceptions for "eltex_hw_9" folder in "eltex_hw_9" target */ = {
+		DD07328A2F8657DC00FD1E77 /* Exceptions for "eltex_hw" folder in "eltex_hw" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = DD0732702F8657DA00FD1E77 /* eltex_hw_9 */;
+			target = DD0732702F8657DA00FD1E77 /* eltex_hw */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DD0732732F8657DA00FD1E77 /* eltex_hw_9 */ = {
+		DD0732892F8657DC00FD1E77 /* eltex_hw */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				DD0732832F8657DC00FD1E77 /* Exceptions for "eltex_hw_9" folder in "eltex_hw_9" target */,
+				DD07328A2F8657DC00FD1E77 /* Exceptions for "eltex_hw" folder in "eltex_hw" target */,
 			);
-			path = eltex_hw_9;
+			path = eltex_hw;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +45,7 @@
 		DD0732682F8657DA00FD1E77 = {
 			isa = PBXGroup;
 			children = (
-				DD0732732F8657DA00FD1E77 /* eltex_hw_9 */,
+				DD0732892F8657DC00FD1E77 /* eltex_hw */,
 				DD0732722F8657DA00FD1E77 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,7 +53,7 @@
 		DD0732722F8657DA00FD1E77 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DD0732712F8657DA00FD1E77 /* eltex_hw_9.app */,
+				DD0732712F8657DA00FD1E77 /* eltex_hw.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,9 +61,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DD0732702F8657DA00FD1E77 /* eltex_hw_9 */ = {
+		DD0732702F8657DA00FD1E77 /* eltex_hw */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hw_9" */;
+			buildConfigurationList = DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hw" */;
 			buildPhases = (
 				DD07326D2F8657DA00FD1E77 /* Sources */,
 				DD07326E2F8657DA00FD1E77 /* Frameworks */,
@@ -74,13 +74,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DD0732732F8657DA00FD1E77 /* eltex_hw_9 */,
+				DD0732892F8657DC00FD1E77 /* eltex_hw */,
 			);
-			name = eltex_hw_9;
+			name = eltex_hw;
 			packageProductDependencies = (
 			);
-			productName = eltex_hw_9;
-			productReference = DD0732712F8657DA00FD1E77 /* eltex_hw_9.app */;
+			productName = eltex_hw;
+			productReference = DD0732712F8657DA00FD1E77 /* eltex_hw.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -98,7 +98,7 @@
 					};
 				};
 			};
-			buildConfigurationList = DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "eltex_hw_9" */;
+			buildConfigurationList = DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "eltex_hw" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -112,7 +112,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DD0732702F8657DA00FD1E77 /* eltex_hw_9 */,
+				DD0732702F8657DA00FD1E77 /* eltex_hw */,
 			);
 		};
 /* End PBXProject section */
@@ -147,11 +147,11 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V95A42AD6Z;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = eltex_hw_9/Info.plist;
+				INFOPLIST_FILE = eltex_hw/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -179,11 +179,11 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V95A42AD6Z;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = eltex_hw_9/Info.plist;
+				INFOPLIST_FILE = eltex_hw/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -326,7 +326,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "eltex_hw_9" */ = {
+		DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "eltex_hw" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD0732872F8657DC00FD1E77 /* Debug */,
@@ -335,7 +335,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hw_9" */ = {
+		DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hw" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD0732852F8657DC00FD1E77 /* Debug */,

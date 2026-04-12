@@ -46,12 +46,19 @@ struct TradeRecord {
 }
 
 final class TradingBot {
+    private let initialTrader: Trader
     private var trader: Trader
     private var currentPrice: Double
 
     init(trader: Trader) {
+        self.initialTrader = trader
         self.trader = trader
         self.currentPrice = Double.random(in: 2000...8000)
+    }
+
+    func resetSession() {
+        trader = initialTrader
+        currentPrice = Double.random(in: 2000...8000)
     }
 
     func greeting() -> String {
@@ -159,6 +166,10 @@ enum PairAssetFactory {
     private static func randomCode() -> String {
         let letters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
         let length = Int.random(in: 3...5)
-        return String((0..<length).map { _ in letters.randomElement()! })
+        return String(
+            (0..<length).compactMap { _ in
+                letters.randomElement()
+            }
+        )
     }
 }
