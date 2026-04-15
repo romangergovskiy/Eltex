@@ -2,6 +2,8 @@ import UIKit
 
 final class TradeTableViewCell: UITableViewCell {
 
+    // MARK: - Properties
+
     static let reuseIdentifier = "TradeTableViewCell"
 
     private let cardView = UIView()
@@ -10,6 +12,8 @@ final class TradeTableViewCell: UITableViewCell {
     private let detailsContainer = UIView()
     private let resultLabel = UILabel()
     private let balanceLabel = UILabel()
+
+    // MARK: - Lifecycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -116,9 +120,9 @@ private extension TradeTableViewCell {
         priceLabel.font = .systemFont(ofSize: 14, weight: .regular)
         resultLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         balanceLabel.font = .systemFont(ofSize: 13, weight: .regular)
-        priceLabel.textColor = .label
-        resultLabel.textColor = .label
-        balanceLabel.textColor = .secondaryLabel
+        priceLabel.textColor = .white
+        resultLabel.textColor = .white
+        balanceLabel.textColor = UIColor.white.withAlphaComponent(0.78)
 
         NSLayoutConstraint.activate([
             cardView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),

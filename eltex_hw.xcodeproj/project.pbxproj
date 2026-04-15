@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		DD07328A2F8657DC00FD1E77 /* Exceptions for "eltex_hw" folder in "eltex_hw" target */ = {
+		DD0732832F8657DC00FD1E77 /* Exceptions for "eltex_hw" folder in "eltex_hw" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -21,10 +21,10 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DD0732892F8657DC00FD1E77 /* eltex_hw */ = {
+		DD0732732F8657DA00FD1E77 /* eltex_hw */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				DD07328A2F8657DC00FD1E77 /* Exceptions for "eltex_hw" folder in "eltex_hw" target */,
+				DD0732832F8657DC00FD1E77 /* Exceptions for "eltex_hw" folder in "eltex_hw" target */,
 			);
 			path = eltex_hw;
 			sourceTree = "<group>";
@@ -45,7 +45,7 @@
 		DD0732682F8657DA00FD1E77 = {
 			isa = PBXGroup;
 			children = (
-				DD0732892F8657DC00FD1E77 /* eltex_hw */,
+				DD0732732F8657DA00FD1E77 /* eltex_hw */,
 				DD0732722F8657DA00FD1E77 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,7 +74,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DD0732892F8657DC00FD1E77 /* eltex_hw */,
+				DD0732732F8657DA00FD1E77 /* eltex_hw */,
 			);
 			name = eltex_hw;
 			packageProductDependencies = (
@@ -158,7 +158,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-9";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-10";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -190,7 +190,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-9";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-10";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

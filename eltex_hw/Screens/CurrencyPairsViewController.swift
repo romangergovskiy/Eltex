@@ -17,6 +17,8 @@ protocol CurrencyPairsViewControllerDelegate: AnyObject {
 
 final class CurrencyPairsViewController: UIViewController {
 
+    // MARK: - Types
+
     enum Mode {
         case compact
         case full
@@ -27,12 +29,13 @@ final class CurrencyPairsViewController: UIViewController {
         case second
     }
 
+    // MARK: - Properties
+
     weak var delegate: CurrencyPairsViewControllerDelegate?
 
     private let mode: Mode
     private let allAssets: [PairAsset]
     private let favoritesStorageKey = "favoritePairAssets"
-    private let compactFallbackAssets: [PairAsset]
     private let startsWithFavoritesOnly: Bool
 
     private var filteredAssets: [PairAsset] = []
@@ -44,14 +47,16 @@ final class CurrencyPairsViewController: UIViewController {
     private var secondAsset: PairAsset
     private var selectedSide: SelectionSide
 
-    // compact mode
+    // MARK: UI (Compact mode)
+
     private let compactPairContainerView = UIView()
     private let compactFirstCurrencyButton = UIButton(type: .system)
     private let compactSecondCurrencyButton = UIButton(type: .system)
     private let compactHintLabel = UILabel()
     private let allButton = UIButton(type: .system)
 
-    // full mode
+    // MARK: UI (Full mode)
+
     private let fullHeaderView = UIView()
     private let fullFirstCurrencyLabel = UILabel()
     private let fullSecondCurrencyLabel = UILabel()
@@ -61,7 +66,8 @@ final class CurrencyPairsViewController: UIViewController {
     private let timerLabel = UILabel()
     private let timerProgressView = UIProgressView(progressViewStyle: .default)
 
-    // common
+    // MARK: UI (Common)
+
     private let favoriteFilterView = FavoriteFilterView()
     private let filterSegmentControl = UISegmentedControl(items: ["Все", "Фиат", "Крипта"])
     private let emptyStateLabel = UILabel()
@@ -87,6 +93,8 @@ final class CurrencyPairsViewController: UIViewController {
     private let updatePeriod = 5
     private var secondsLeft = 5
 
+    // MARK: - Lifecycle
+
     init(
         mode: Mode,
         allAssets: [PairAsset],
@@ -101,7 +109,6 @@ final class CurrencyPairsViewController: UIViewController {
         self.secondAsset = secondAsset
         self.selectedSide = selectedSide
         self.startsWithFavoritesOnly = startsWithFavoritesOnly
-        self.compactFallbackAssets = Array(allAssets.shuffled().prefix(10))
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -143,6 +150,8 @@ final class CurrencyPairsViewController: UIViewController {
 }
 
 private extension CurrencyPairsViewController {
+
+    // MARK: - Setup
 
     func setupUI() {
         view.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
@@ -456,6 +465,8 @@ private extension CurrencyPairsViewController {
 
 private extension CurrencyPairsViewController {
 
+    // MARK: - Actions
+
     @objc func doneTapped() {
         amountTextField.resignFirstResponder()
     }
@@ -514,6 +525,8 @@ private extension CurrencyPairsViewController {
 
 private extension CurrencyPairsViewController {
 
+    // MARK: - Business Logic
+
     func applySelectedFiltersAndReload() {
         switch mode {
         case .compact:
@@ -526,11 +539,9 @@ private extension CurrencyPairsViewController {
     }
 
     func compactSource() -> [PairAsset] {
-        let favorites = allAssets.filter { favoriteCodes.contains($0.code) }
-        if !favorites.isEmpty {
-            return favorites
-        }
-        return compactFallbackAssets.sorted { $0.code < $1.code }
+        allAssets
+            .filter { favoriteCodes.contains($0.code) }
+            .sorted { $0.code < $1.code }
     }
 
     func fullSource() -> [PairAsset] {
@@ -679,6 +690,8 @@ private extension CurrencyPairsViewController {
 }
 
 extension CurrencyPairsViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    // MARK: - Layout
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
@@ -691,6 +704,8 @@ extension CurrencyPairsViewController: UICollectionViewDataSource, UICollectionV
         let width = floor(availableWidth / itemsInRow)
         layout.itemSize = CGSize(width: width, height: 56)
     }
+
+    // MARK: - UICollectionViewDataSource
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         filteredAssets.count
@@ -716,12 +731,16 @@ extension CurrencyPairsViewController: UICollectionViewDataSource, UICollectionV
         return cell
     }
 
+    // MARK: - UICollectionViewDelegate
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectAsset(filteredAssets[indexPath.item])
     }
 }
 
 extension CurrencyPairsViewController: PairAssetCollectionCellDelegate {
+    // MARK: - PairAssetCollectionCellDelegate
+
     func pairAssetCollectionCell(_ cell: PairAssetCollectionCell, didTapFavoriteFor code: String, isFavorite: Bool) {
         if isFavorite {
             favoriteCodes.insert(code)
@@ -734,6 +753,8 @@ extension CurrencyPairsViewController: PairAssetCollectionCellDelegate {
 }
 
 extension CurrencyPairsViewController: FavoriteFilterViewDelegate {
+    // MARK: - FavoriteFilterViewDelegate
+
     func favoriteFilterView(_ view: FavoriteFilterView, didChangeState isEnabled: Bool) {
         isFavoriteFilterEnabled = isEnabled
         applySelectedFiltersAndReload()

@@ -2,6 +2,8 @@ import UIKit
 
 final class ViewController: UIViewController {
 
+    // MARK: - Properties
+
     private let headerImageView = UIImageView()
     private let containerView = UIView()
     private let filterStack = UIStackView()
@@ -34,12 +36,15 @@ final class ViewController: UIViewController {
         setupInitialPair()
         setupUI()
         setupNavigationBar()
+        setupGestures()
         updatePairText()
         updateEmptyState()
     }
 }
 
 private extension ViewController {
+
+    // MARK: - Setup
 
     func setupInitialPair() {
         let fallback = allAssets.first ?? PairAsset(code: "USD", category: .fiat)
@@ -70,18 +75,45 @@ private extension ViewController {
     }
 
     func setupNavigationBar() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.tintColor = .systemBlue
+
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "trash"),
             style: .plain,
             target: self,
             action: #selector(resetTapped)
         )
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
+
+        let randomButton = UIBarButtonItem(
             image: UIImage(systemName: "shuffle"),
             style: .plain,
             target: self,
             action: #selector(randomPairTapped)
         )
+
+        let chartButton = UIBarButtonItem(
+            image: UIImage(systemName: "chart.bar.xaxis"),
+            style: .plain,
+            target: self,
+            action: #selector(openChartTapped)
+        )
+
+        navigationItem.rightBarButtonItems = [chartButton, randomButton]
+    }
+
+    func setupGestures() {
+        let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeUp))
+        swipeUp.direction = .up
+        view.addGestureRecognizer(swipeUp)
     }
 
     func setupHeader() {
@@ -238,6 +270,8 @@ private extension ViewController {
 
 private extension ViewController {
 
+    // MARK: - Actions
+
     @objc func runTapped() {
         tradingBot.resetSession()
         greetingText = "\(tradingBot.greeting())\nПара: \(firstAsset.code)-\(secondAsset.code)"
@@ -282,6 +316,16 @@ private extension ViewController {
         applyPairChange(first: first, second: second)
     }
 
+    @objc func openChartTapped() {
+        let chartsViewController = ChartsViewController()
+        chartsViewController.title = "График"
+        navigationController?.pushViewController(chartsViewController, animated: true)
+    }
+
+    @objc func handleSwipeUp() {
+        openChartTapped()
+    }
+
     func applyPairChange(first: PairAsset, second: PairAsset) {
         guard first.code != second.code else { return }
 
@@ -316,6 +360,7 @@ private extension ViewController {
 }
 
 extension ViewController: UITableViewDataSource {
+    // MARK: - UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -369,6 +414,7 @@ extension ViewController: UITableViewDataSource {
 }
 
 extension ViewController: UITableViewDelegate {
+    // MARK: - UITableViewDelegate
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard indexPath.section == 1 else { return UITableView.automaticDimension }
@@ -382,6 +428,8 @@ extension ViewController: UITableViewDelegate {
 }
 
 extension ViewController: CurrencyPairsViewControllerDelegate {
+    // MARK: - CurrencyPairsViewControllerDelegate
+
     func currencyPairsViewController(
         _ controller: CurrencyPairsViewController,
         didUpdateFirstAsset firstAsset: PairAsset,
