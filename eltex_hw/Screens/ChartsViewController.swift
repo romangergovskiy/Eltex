@@ -4,6 +4,21 @@ final class ChartsViewController: UIViewController {
 
     // MARK: - Properties
 
+    private enum ChartMode {
+        case candles
+        case line
+    }
+
+    private let chartContainerView = UIView()
+    private let interactionHintLabel = UILabel()
+    private lazy var modeSegmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["Свечной", "Линейный"])
+        control.translatesAutoresizingMaskIntoConstraints = false
+        control.selectedSegmentIndex = 0
+        control.addTarget(self, action: #selector(modeChanged), for: .valueChanged)
+        return control
+    }()
+
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -20,6 +35,7 @@ final class ChartsViewController: UIViewController {
         collectionView.register(CandleCollectionViewCell.self, forCellWithReuseIdentifier: CandleCollectionViewCell.reuseIdentifier)
         return collectionView
     }()
+    private let lineChartView = LineChartView()
 
     private let detailsContainerView = UIView()
     private let recommendationContainerView = UIView()
@@ -41,6 +57,15 @@ final class ChartsViewController: UIViewController {
         setupUI()
         generateCandles()
         collectionView.reloadData()
+        lineChartView.points = candles.map { LinePointData(price: $0.close, title: $0.timeTitle) }
+        lineChartView.onPointSelected = { [weak self] index in
+            guard let self else { return }
+            guard self.candles.indices.contains(index) else { return }
+            let candle = self.candles[index]
+            self.showDetails(for: candle)
+            self.recommendationLabel.text = String(format: "Выбрана точка: %.2f", candle.close)
+        }
+        setChartMode(.candles)
 
         if let firstCandle = candles.first {
             showDetails(for: firstCandle)
@@ -66,18 +91,49 @@ private extension ChartsViewController {
     }
 
     func setupUI() {
+        setupChartContainer()
         setupCollectionView()
+        setupLineChart()
+        setupModeSegmentedControl()
+        setupInteractionHintLabel()
         setupDetailsContainer()
         setupRecommendationContainer()
         addSubviews()
         makeConstraints()
     }
 
+    func setupChartContainer() {
+        chartContainerView.translatesAutoresizingMaskIntoConstraints = false
+        chartContainerView.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
+        chartContainerView.layer.borderWidth = 1
+        chartContainerView.layer.borderColor = UIColor.white.withAlphaComponent(0.08).cgColor
+        chartContainerView.layer.cornerRadius = 12
+        chartContainerView.clipsToBounds = true
+    }
+
     func setupCollectionView() {
-        collectionView.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
-        collectionView.layer.borderWidth = 1
-        collectionView.layer.borderColor = UIColor.white.withAlphaComponent(0.08).cgColor
+        collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
+    }
+
+    func setupLineChart() {
+        lineChartView.translatesAutoresizingMaskIntoConstraints = false
+        lineChartView.backgroundColor = .clear
+    }
+
+    func setupModeSegmentedControl() {
+        modeSegmentedControl.backgroundColor = UIColor(red: 0.18, green: 0.25, blue: 0.39, alpha: 1)
+        modeSegmentedControl.selectedSegmentTintColor = UIColor(red: 0.29, green: 0.52, blue: 0.97, alpha: 1)
+        modeSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
+        modeSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
+    }
+
+    func setupInteractionHintLabel() {
+        interactionHintLabel.translatesAutoresizingMaskIntoConstraints = false
+        interactionHintLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        interactionHintLabel.textColor = UIColor.white.withAlphaComponent(0.75)
+        interactionHintLabel.numberOfLines = 0
+        interactionHintLabel.textAlignment = .left
     }
 
     func setupDetailsContainer() {
@@ -113,19 +169,42 @@ private extension ChartsViewController {
     // MARK: - Layout
 
     func addSubviews() {
-        view.addSubview(collectionView)
+        view.addSubview(modeSegmentedControl)
+        view.addSubview(interactionHintLabel)
+        view.addSubview(chartContainerView)
+        chartContainerView.addSubview(collectionView)
+        chartContainerView.addSubview(lineChartView)
         view.addSubview(detailsContainerView)
         view.addSubview(recommendationContainerView)
     }
 
     func makeConstraints() {
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            collectionView.heightAnchor.constraint(equalToConstant: 260),
+            modeSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
+            modeSegmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            modeSegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            modeSegmentedControl.heightAnchor.constraint(equalToConstant: 34),
 
-            detailsContainerView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 16),
+            interactionHintLabel.topAnchor.constraint(equalTo: modeSegmentedControl.bottomAnchor, constant: 10),
+            interactionHintLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
+            interactionHintLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
+
+            chartContainerView.topAnchor.constraint(equalTo: interactionHintLabel.bottomAnchor, constant: 8),
+            chartContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            chartContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            chartContainerView.heightAnchor.constraint(equalToConstant: 260),
+
+            collectionView.topAnchor.constraint(equalTo: chartContainerView.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: chartContainerView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: chartContainerView.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: chartContainerView.bottomAnchor),
+
+            lineChartView.topAnchor.constraint(equalTo: chartContainerView.topAnchor),
+            lineChartView.leadingAnchor.constraint(equalTo: chartContainerView.leadingAnchor),
+            lineChartView.trailingAnchor.constraint(equalTo: chartContainerView.trailingAnchor),
+            lineChartView.bottomAnchor.constraint(equalTo: chartContainerView.bottomAnchor),
+
+            detailsContainerView.topAnchor.constraint(equalTo: chartContainerView.bottomAnchor, constant: 16),
             detailsContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             detailsContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             detailsContainerView.heightAnchor.constraint(equalToConstant: 140),
@@ -161,17 +240,20 @@ private extension ChartsViewController {
     // MARK: - Data
 
     func generateCandles() {
-        candles = (0..<28).map { _ in
+        candles = (0..<28).map { index in
             let open = Double.random(in: 100...200)
             let close = open + Double.random(in: -25...25)
             let high = max(open, close) + Double.random(in: 2...12)
             let low = min(open, close) - Double.random(in: 2...12)
+            let hour = 9 + index
+            let hourTitle = String(format: "%02d:00", hour % 24)
 
             return CandleData(
                 open: open,
                 close: close,
                 high: high,
                 low: low,
+                timeTitle: hourTitle,
                 bodyHeight: CGFloat.random(in: 50...120),
                 bodyTop: CGFloat.random(in: 40...100),
                 topTailExtra: CGFloat.random(in: 8...28),
@@ -202,149 +284,18 @@ private extension ChartsViewController {
 
         recommendationLabel.text = "Рекомендации: \(value)"
     }
-}
 
-private struct CandleData {
-    let open: Double
-    let close: Double
-    let high: Double
-    let low: Double
-
-    let bodyHeight: CGFloat
-    let bodyTop: CGFloat
-    let topTailExtra: CGFloat
-    let bottomTailExtra: CGFloat
-
-    var isGrowing: Bool {
-        close >= open
-    }
-}
-
-private final class CandleView: UIView {
-    // MARK: - Properties
-
-    private let bodyView = UIView()
-    private let tailView = UIView()
-
-    private var bodyTopConstraint: NSLayoutConstraint?
-    private var bodyHeightConstraint: NSLayoutConstraint?
-    private var tailTopConstraint: NSLayoutConstraint?
-    private var tailBottomConstraint: NSLayoutConstraint?
-
-    var onTap: (() -> Void)?
-    var onLongPress: (() -> Void)?
-
-    // MARK: - Lifecycle
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupView()
+    @objc func modeChanged() {
+        let mode: ChartMode = modeSegmentedControl.selectedSegmentIndex == 0 ? .candles : .line
+        setChartMode(mode)
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupView()
-    }
-
-    // MARK: - Setup
-
-    private func setupView() {
-        backgroundColor = .clear
-        translatesAutoresizingMaskIntoConstraints = false
-
-        bodyView.translatesAutoresizingMaskIntoConstraints = false
-        tailView.translatesAutoresizingMaskIntoConstraints = false
-        bodyView.layer.cornerRadius = 6
-        tailView.layer.cornerRadius = 1.5
-
-        addSubview(tailView)
-        addSubview(bodyView)
-
-        bodyTopConstraint = bodyView.topAnchor.constraint(equalTo: topAnchor, constant: 60)
-        bodyHeightConstraint = bodyView.heightAnchor.constraint(equalToConstant: 70)
-        tailTopConstraint = tailView.topAnchor.constraint(equalTo: topAnchor, constant: 45)
-        tailBottomConstraint = tailView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -45)
-
-        NSLayoutConstraint.activate([
-            bodyView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            bodyView.widthAnchor.constraint(equalToConstant: 30),
-            bodyTopConstraint,
-            bodyHeightConstraint,
-
-            tailView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            tailView.widthAnchor.constraint(equalToConstant: 3),
-            tailTopConstraint,
-            tailBottomConstraint
-        ].compactMap { $0 })
-
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        addGestureRecognizer(tap)
-
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
-        addGestureRecognizer(longPress)
-    }
-
-    // MARK: - Configure
-
-    func configure(with candle: CandleData) {
-        let candleColor: UIColor = candle.isGrowing ? .systemGreen : .systemRed
-        bodyView.backgroundColor = candleColor
-        tailView.backgroundColor = candleColor
-
-        let bodyBottom = candle.bodyTop + candle.bodyHeight
-        bodyTopConstraint?.constant = candle.bodyTop
-        bodyHeightConstraint?.constant = candle.bodyHeight
-        tailTopConstraint?.constant = max(8, candle.bodyTop - candle.topTailExtra)
-        tailBottomConstraint?.constant = -max(8, 220 - bodyBottom + candle.bottomTailExtra)
-    }
-
-    // MARK: - Actions
-
-    @objc func handleTap() {
-        onTap?()
-    }
-
-    @objc func handleLongPress(_ recognizer: UILongPressGestureRecognizer) {
-        guard recognizer.state == .began else { return }
-        onLongPress?()
-    }
-}
-
-private final class CandleCollectionViewCell: UICollectionViewCell {
-    // MARK: - Properties
-
-    static let reuseIdentifier = "CandleCollectionViewCell"
-
-    private let candleView = CandleView()
-
-    // MARK: - Lifecycle
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        contentView.addSubview(candleView)
-
-        NSLayoutConstraint.activate([
-            candleView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            candleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            candleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            candleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        ])
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: - Configure
-
-    func configure(
-        candle: CandleData,
-        onTap: @escaping () -> Void,
-        onLongPress: @escaping () -> Void
-    ) {
-        candleView.configure(with: candle)
-        candleView.onTap = onTap
-        candleView.onLongPress = onLongPress
+    private func setChartMode(_ mode: ChartMode) {
+        collectionView.isHidden = mode != .candles
+        lineChartView.isHidden = mode != .line
+        interactionHintLabel.text = mode == .candles
+            ? "Нажмите на свечу, чтобы увидеть значения."
+            : "Нажмите на график, чтобы увидеть значение в точке."
     }
 }
 
