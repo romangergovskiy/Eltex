@@ -18,11 +18,16 @@ final class LineChartView: UIView {
     private let gridLayer = CAShapeLayer()
     private let selectedPointLayer = CAShapeLayer()
     private let selectedGuideLayer = CAShapeLayer()
+    private let currentPricePulseView = UIView()
+    private let currentPriceIndicatorView = UIView()
 
     private let selectedValueLabel = UILabel()
     private var yAxisLabels: [UILabel] = []
     private var xAxisLabels: [UILabel] = []
     private var selectedIndex: Int?
+    private var pulseAnimationStarted = false
+    private var didSetCurrentIndicatorPosition = false
+    private var shouldAnimateCurrentIndicatorOnNextDraw = false
 
     private let chartInsets = UIEdgeInsets(top: 12, left: 52, bottom: 34, right: 12)
 
@@ -69,6 +74,20 @@ final class LineChartView: UIView {
         layer.addSublayer(lineLayer)
         layer.addSublayer(selectedGuideLayer)
         layer.addSublayer(selectedPointLayer)
+
+        currentPricePulseView.frame = CGRect(x: 0, y: 0, width: 18, height: 18)
+        currentPricePulseView.backgroundColor = UIColor.systemTeal.withAlphaComponent(0.25)
+        currentPricePulseView.layer.cornerRadius = 9
+        currentPricePulseView.isUserInteractionEnabled = false
+        addSubview(currentPricePulseView)
+
+        currentPriceIndicatorView.frame = CGRect(x: 0, y: 0, width: 11, height: 11)
+        currentPriceIndicatorView.backgroundColor = .systemTeal
+        currentPriceIndicatorView.layer.borderColor = UIColor.white.cgColor
+        currentPriceIndicatorView.layer.borderWidth = 2
+        currentPriceIndicatorView.layer.cornerRadius = 5.5
+        currentPriceIndicatorView.isUserInteractionEnabled = false
+        addSubview(currentPriceIndicatorView)
 
         selectedValueLabel.translatesAutoresizingMaskIntoConstraints = false
         selectedValueLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -119,6 +138,8 @@ final class LineChartView: UIView {
             lineLayer.path = nil
             selectedGuideLayer.path = nil
             selectedPointLayer.path = nil
+            currentPricePulseView.isHidden = true
+            currentPriceIndicatorView.isHidden = true
             selectedValueLabel.isHidden = true
             return
         }
@@ -177,6 +198,7 @@ final class LineChartView: UIView {
         lineLayer.path = linePath.cgPath
 
         updateSelectionLayers(chartRect: chartRect, minPrice: minPrice, maxPrice: maxPrice)
+        updateCurrentPriceIndicator(chartRect: chartRect, minPrice: minPrice, maxPrice: maxPrice)
     }
 
     private func updateSelectionLayers(chartRect: CGRect, minPrice: Double, maxPrice: Double) {
@@ -209,6 +231,93 @@ final class LineChartView: UIView {
         let y = max(6, selectedPoint.y - selectedValueLabel.bounds.height - 8)
         selectedValueLabel.frame = CGRect(origin: CGPoint(x: x, y: y), size: selectedValueLabel.bounds.size)
         selectedValueLabel.isHidden = false
+    }
+
+    private func updateCurrentPriceIndicator(chartRect: CGRect, minPrice: Double, maxPrice: Double) {
+        guard !points.isEmpty else {
+            currentPricePulseView.isHidden = true
+            currentPriceIndicatorView.isHidden = true
+            didSetCurrentIndicatorPosition = false
+            return
+        }
+
+        let lastIndex = points.count - 1
+        let point = chartPoint(at: lastIndex, in: chartRect, minPrice: minPrice, maxPrice: maxPrice)
+        currentPricePulseView.isHidden = false
+        currentPriceIndicatorView.isHidden = false
+
+        let shouldAnimate = didSetCurrentIndicatorPosition && shouldAnimateCurrentIndicatorOnNextDraw
+        if shouldAnimate {
+            UIView.animate(withDuration: 0.35, delay: 0, options: [.curveEaseInOut]) {
+                self.currentPricePulseView.center = point
+                self.currentPriceIndicatorView.center = point
+            }
+        } else {
+            currentPricePulseView.center = point
+            currentPriceIndicatorView.center = point
+            didSetCurrentIndicatorPosition = true
+        }
+        shouldAnimateCurrentIndicatorOnNextDraw = false
+
+        startPulseAnimationIfNeeded()
+    }
+
+    private func startPulseAnimationIfNeeded() {
+        guard !pulseAnimationStarted else { return }
+        pulseAnimationStarted = true
+
+        let opacityAnimation = CABasicAnimation(keyPath: "opacity")
+        opacityAnimation.fromValue = 1.0
+        opacityAnimation.toValue = 0.5
+        opacityAnimation.duration = 0.8
+        opacityAnimation.autoreverses = true
+        opacityAnimation.repeatCount = .infinity
+
+        let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+        scaleAnimation.fromValue = 1.0
+        scaleAnimation.toValue = 1.5
+        scaleAnimation.duration = 0.8
+        scaleAnimation.autoreverses = true
+        scaleAnimation.repeatCount = .infinity
+
+        currentPricePulseView.layer.add(opacityAnimation, forKey: "pulse.opacity")
+        currentPricePulseView.layer.add(scaleAnimation, forKey: "pulse.scale")
+    }
+
+    // MARK: - Live Updates
+
+    func appendLivePoint(_ point: LinePointData, keepCount: Int, animated: Bool) {
+        let oldLinePath = lineLayer.path
+
+        var updatedPoints = points
+        updatedPoints.append(point)
+        if updatedPoints.count > keepCount {
+            updatedPoints.removeFirst(updatedPoints.count - keepCount)
+        }
+
+        shouldAnimateCurrentIndicatorOnNextDraw = animated
+        points = updatedPoints
+        layoutIfNeeded()
+
+        guard animated else { return }
+        animatePathChange(layer: lineLayer, from: oldLinePath, to: lineLayer.path, key: "line.path")
+
+        let strokeAnimation = CABasicAnimation(keyPath: "strokeEnd")
+        strokeAnimation.fromValue = 0.9
+        strokeAnimation.toValue = 1
+        strokeAnimation.duration = 0.35
+        strokeAnimation.timingFunction = CAMediaTimingFunction(name: .easeOut)
+        lineLayer.add(strokeAnimation, forKey: "line.strokeEnd")
+    }
+
+    func animatePathChange(layer: CAShapeLayer, from: CGPath?, to: CGPath?, key: String) {
+        guard let from, let to else { return }
+        let animation = CABasicAnimation(keyPath: "path")
+        animation.fromValue = from
+        animation.toValue = to
+        animation.duration = 0.35
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        layer.add(animation, forKey: key)
     }
 
     private func axisIndexes(totalCount: Int, targetCount: Int) -> [Int] {

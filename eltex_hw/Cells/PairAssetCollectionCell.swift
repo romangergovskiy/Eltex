@@ -73,6 +73,21 @@ final class PairAssetCollectionCell: UICollectionViewCell {
         contentView.layer.borderColor = isSelectedPair ? UIColor.systemTeal.cgColor : nil
     }
 
+    func playSelectionAnimation(completion: (() -> Void)? = nil) {
+        let startColor = contentView.backgroundColor
+        UIView.animate(withDuration: 0.12, delay: 0, options: [.curveEaseOut]) {
+            self.transform = CGAffineTransform(scaleX: 0.92, y: 0.92)
+            self.contentView.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.8)
+        } completion: { _ in
+            UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut]) {
+                self.transform = .identity
+                self.contentView.backgroundColor = startColor
+            } completion: { _ in
+                completion?()
+            }
+        }
+    }
+
     // MARK: - Private
 
     private func setupUI() {

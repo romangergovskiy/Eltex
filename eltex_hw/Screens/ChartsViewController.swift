@@ -47,6 +47,11 @@ final class ChartsViewController: UIViewController {
     private let recommendationLabel = UILabel()
 
     private var candles: [CandleData] = []
+    private var linePoints: [LinePointData] = []
+    private var chartMode: ChartMode = .candles
+    private var liveTimer: Timer?
+    private let maxVisiblePoints = 28
+    private var nextPointIndex = 0
 
     // MARK: - Lifecycle
 
@@ -57,19 +62,39 @@ final class ChartsViewController: UIViewController {
         setupUI()
         generateCandles()
         collectionView.reloadData()
-        lineChartView.points = candles.map { LinePointData(price: $0.close, title: $0.timeTitle) }
+        linePoints = candles.map { LinePointData(price: $0.close, title: $0.timeTitle) }
+        lineChartView.points = linePoints
         lineChartView.onPointSelected = { [weak self] index in
             guard let self else { return }
-            guard self.candles.indices.contains(index) else { return }
-            let candle = self.candles[index]
-            self.showDetails(for: candle)
-            self.recommendationLabel.text = String(format: "Выбрана точка: %.2f", candle.close)
+            guard self.linePoints.indices.contains(index) else { return }
+            let point = self.linePoints[index]
+            self.recommendationLabel.text = String(format: "Выбрана точка: %.2f", point.price)
+
+            if self.candles.indices.contains(index) {
+                let candle = self.candles[index]
+                self.showDetails(for: candle)
+            }
         }
+        nextPointIndex = candles.count
         setChartMode(.candles)
 
         if let firstCandle = candles.first {
             showDetails(for: firstCandle)
         }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        startLiveUpdates()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopLiveUpdates()
+    }
+
+    deinit {
+        stopLiveUpdates()
     }
 }
 
@@ -291,11 +316,46 @@ private extension ChartsViewController {
     }
 
     private func setChartMode(_ mode: ChartMode) {
+        chartMode = mode
         collectionView.isHidden = mode != .candles
         lineChartView.isHidden = mode != .line
         interactionHintLabel.text = mode == .candles
             ? "Нажмите на свечу, чтобы увидеть значения."
             : "Нажмите на график, чтобы увидеть значение в точке."
+    }
+
+    func startLiveUpdates() {
+        guard liveTimer == nil else { return }
+        liveTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(handleLiveTick), userInfo: nil, repeats: true)
+    }
+
+    func stopLiveUpdates() {
+        liveTimer?.invalidate()
+        liveTimer = nil
+    }
+
+    @objc func handleLiveTick() {
+        let newPoint = generateNextLinePoint()
+        linePoints.append(newPoint)
+        if linePoints.count > maxVisiblePoints {
+            linePoints.removeFirst(linePoints.count - maxVisiblePoints)
+        }
+
+        lineChartView.appendLivePoint(newPoint, keepCount: maxVisiblePoints, animated: true)
+
+        if chartMode == .line {
+            recommendationLabel.text = String(format: "Текущая цена: %.2f", newPoint.price)
+        }
+    }
+
+    func generateNextLinePoint() -> LinePointData {
+        let lastPrice = linePoints.last?.price ?? candles.last?.close ?? Double.random(in: 100...200)
+        let price = lastPrice + Double.random(in: -18...18)
+        let hour = 9 + nextPointIndex
+        let hourTitle = String(format: "%02d:00", hour % 24)
+        nextPointIndex += 1
+
+        return LinePointData(price: price, title: hourTitle)
     }
 }
 

@@ -18,16 +18,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="jLk-nG-h2L">
-                                <rect key="frame" x="0.0" y="-342" width="393" height="1536"/>
+                                <rect key="frame" x="126.66666666666669" y="350" width="140" height="152"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" red="0.059999998658895493" green="0.090000003576278687" blue="0.15999999642372131" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="jLk-nG-h2L" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="7iL-Lm-gjj"/>
                             <constraint firstItem="jLk-nG-h2L" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="hdu-CL-tp7"/>
-                            <constraint firstAttribute="trailing" secondItem="jLk-nG-h2L" secondAttribute="trailing" id="qd8-00-jJr"/>
+                            <constraint firstItem="jLk-nG-h2L" firstAttribute="height" secondItem="jLk-nG-h2L" secondAttribute="width" multiplier="76:70" id="hms-u8-QOE"/>
                             <constraint firstItem="jLk-nG-h2L" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="uka-wJ-Lrv"/>
+                            <constraint firstItem="jLk-nG-h2L" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" multiplier="0.356234" id="w0v-PV-50d"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -38,8 +38,5 @@
     </scenes>
     <resources>
         <image name="logo" width="1024" height="1536"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>

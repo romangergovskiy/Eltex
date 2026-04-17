@@ -156,6 +156,7 @@ private extension CurrencyPairsViewController {
     func setupUI() {
         view.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
         title = mode == .compact ? "Быстрый выбор пары" : "Все валюты"
+        setupNavigationBarAppearance()
 
         setupCompactUI()
         setupFullHeaderUI()
@@ -167,6 +168,19 @@ private extension CurrencyPairsViewController {
         addSubviews()
         makeConstraints()
         updateModeSpecificVisibility()
+    }
+
+    func setupNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.tintColor = .white
     }
 
     func setupCompactUI() {
@@ -303,7 +317,7 @@ private extension CurrencyPairsViewController {
             fullFirstCurrencyLabel.heightAnchor.constraint(equalToConstant: 40),
 
             secondHintLabel.leadingAnchor.constraint(equalTo: fullHeaderView.leadingAnchor, constant: 16),
-            secondHintLabel.topAnchor.constraint(equalTo: firstHintLabel.bottomAnchor, constant: 12),
+            secondHintLabel.topAnchor.constraint(equalTo: fullFirstCurrencyLabel.bottomAnchor, constant: 12),
             secondHintLabel.widthAnchor.constraint(equalToConstant: 72),
 
             fullSecondCurrencyLabel.leadingAnchor.constraint(equalTo: secondHintLabel.trailingAnchor, constant: 12),
@@ -734,7 +748,20 @@ extension CurrencyPairsViewController: UICollectionViewDataSource, UICollectionV
     // MARK: - UICollectionViewDelegate
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selectAsset(filteredAssets[indexPath.item])
+        let asset = filteredAssets[indexPath.item]
+
+        if isDisabled(asset) {
+            selectAsset(asset)
+            return
+        }
+
+        if let cell = collectionView.cellForItem(at: indexPath) as? PairAssetCollectionCell {
+            cell.playSelectionAnimation { [weak self] in
+                self?.selectAsset(asset)
+            }
+        } else {
+            selectAsset(asset)
+        }
     }
 }
 
