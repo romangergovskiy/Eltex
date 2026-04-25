@@ -4,6 +4,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     private var mainController: UIViewController?
+    private let sharedWallet = Wallet(
+        initialBalances: AppConfig.initialWalletBalances,
+        autoCreditAmount: AppConfig.autoCreditAmount
+    )
 
     // MARK: - UIWindowSceneDelegate
 
@@ -24,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             tag: 0
         )
 
-        let tradeViewController = ViewController()
+        let tradeViewController = ViewController(wallet: sharedWallet)
         tradeViewController.title = "Торговля"
 
         let tradeNavigationController = UINavigationController(rootViewController: tradeViewController)
@@ -34,8 +38,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             tag: 1
         )
 
+        let p2pViewController = P2PExchangeViewController(wallet: sharedWallet)
+        p2pViewController.title = "P2P обмен"
+        let p2pNavigationController = UINavigationController(rootViewController: p2pViewController)
+        p2pNavigationController.tabBarItem = UITabBarItem(
+            title: "P2P",
+            image: UIImage(systemName: "person.3.sequence"),
+            tag: 2
+        )
+
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [chartsNavigationController, tradeNavigationController]
+        tabBarController.viewControllers = [chartsNavigationController, tradeNavigationController, p2pNavigationController]
 
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = splashViewController

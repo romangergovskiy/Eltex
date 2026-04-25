@@ -108,7 +108,6 @@ final class Wallet {
 
         return queue.sync {
             replenishIfNeeded(currency: sourceCurrency)
-            replenishIfNeeded(currency: targetCurrency)
 
             let available = balances[sourceCurrency, default: 0]
             let spent = min(available, amount)
@@ -121,7 +120,6 @@ final class Wallet {
             balances[targetCurrency, default: 0] += received
 
             replenishIfNeeded(currency: sourceCurrency)
-            replenishIfNeeded(currency: targetCurrency)
             return WalletExchangeResult(spent: spent, received: received)
         }
     }

@@ -23,10 +23,7 @@ final class ViewController: UIViewController {
     private var statusText = ""
     private var dailyResults: [BotDayResult] = []
     private var bots: [TradingBot] = []
-    private let wallet = Wallet(
-        initialBalances: AppConfig.initialWalletBalances,
-        autoCreditAmount: AppConfig.autoCreditAmount
-    )
+    private let wallet: Wallet
     private lazy var tradingEngine = TradingEngine(config: AppConfig.tradingConfig)
 
     private let allAssets = PairAssetFactory.makeList(minCount: 140)
@@ -36,6 +33,15 @@ final class ViewController: UIViewController {
     private var secondAsset: PairAsset = PairAsset(code: "BTC", category: .crypto)
     private var isCompactLayout: Bool {
         view.bounds.height <= 700
+    }
+
+    init(wallet: Wallet) {
+        self.wallet = wallet
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: - Lifecycle
