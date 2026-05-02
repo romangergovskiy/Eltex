@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'eltex_hw' in project 'eltex_hw' (no dependencies)

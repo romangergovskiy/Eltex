@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 // MARK: - Errors
 
@@ -63,21 +64,119 @@ final class NetworkService {
     }
 
     private let session: URLSession
+    private let isNetworkWithCombine: Bool
     private let cacheQueue = DispatchQueue(label: "network.service.cache.queue")
     private var cachedPairs: [MarketPair] = []
     private var cachedAssets: [PairAsset] = []
+    private var activeRequests: [UUID: AnyCancellable] = [:]
 
     // MARK: Lifecycle
 
-    init(session: URLSession = .shared) {
+    init(session: URLSession = .shared, isNetworkWithCombine: Bool = AppConfig.isNetworkWithCombine) {
         self.session = session
+        self.isNetworkWithCombine = isNetworkWithCombine
     }
 
     // MARK: Public
 
     func loadAvailableAssets(completion: @escaping (Result<[PairAsset], NetworkServiceError>) -> Void) {
+        if isNetworkWithCombine {
+            let requestID = UUID()
+            let cancellable = loadAvailableAssetsPublisher()
+                .receive(on: DispatchQueue.main)
+                .sink(
+                    receiveCompletion: { [weak self] completionResult in
+                        self?.activeRequests.removeValue(forKey: requestID)
+                        if case let .failure(error) = completionResult {
+                            completion(.failure(error))
+                        }
+                    },
+                    receiveValue: { assets in
+                        completion(.success(assets))
+                    }
+                )
+            activeRequests[requestID] = cancellable
+            return
+        }
+        loadAvailableAssetsLegacy(completion: completion)
+    }
+
+    func loadOffers(
+        from sourceCode: String,
+        to targetCode: String,
+        completion: @escaping (Result<[P2POffer], NetworkServiceError>) -> Void
+    ) {
+        if isNetworkWithCombine {
+            let requestID = UUID()
+            let cancellable = loadOffersPublisher(from: sourceCode, to: targetCode)
+                .receive(on: DispatchQueue.main)
+                .sink(
+                    receiveCompletion: { [weak self] completionResult in
+                        self?.activeRequests.removeValue(forKey: requestID)
+                        if case let .failure(error) = completionResult {
+                            completion(.failure(error))
+                        }
+                    },
+                    receiveValue: { offers in
+                        completion(.success(offers))
+                    }
+                )
+            activeRequests[requestID] = cancellable
+            return
+        }
+        loadOffersLegacy(from: sourceCode, to: targetCode, completion: completion)
+    }
+
+    func loadAvailableAssetsPublisher() -> AnyPublisher<[PairAsset], NetworkServiceError> {
+        loadMarketPairsPublisher()
+            .tryMap { [weak self] pairs -> [PairAsset] in
+                guard let self else {
+                    throw NetworkServiceError.unknown
+                }
+                let assets = self.makeAssets(from: pairs)
+                self.cacheQueue.async {
+                    self.cachedAssets = assets
+                }
+                guard !assets.isEmpty else {
+                    throw NetworkServiceError.parsing
+                }
+                return assets
+            }
+            .mapError { [weak self] error in
+                self?.mapCombineError(error) ?? .unknown
+            }
+            .eraseToAnyPublisher()
+    }
+
+    func loadOffersPublisher(from sourceCode: String, to targetCode: String) -> AnyPublisher<[P2POffer], NetworkServiceError> {
+        loadMarketPairsPublisher()
+            .tryMap { [weak self] pairs in
+                guard let self else {
+                    throw NetworkServiceError.unknown
+                }
+                guard let marketRate = self.resolveRate(
+                    from: sourceCode,
+                    to: targetCode,
+                    pairs: pairs
+                ) else {
+                    throw NetworkServiceError.parsing
+                }
+                return self.makeOffers(marketRate: marketRate)
+            }
+            .mapError { [weak self] error in
+                self?.mapCombineError(error) ?? .unknown
+            }
+            .eraseToAnyPublisher()
+    }
+
+    private func loadAvailableAssetsLegacy(completion: @escaping (Result<[PairAsset], NetworkServiceError>) -> Void) {
         loadMarketPairs { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                DispatchQueue.main.async {
+                    completion(.failure(.unknown))
+                }
+                return
+            }
             switch result {
             case let .success(pairs):
                 let assets = self.makeAssets(from: pairs)
@@ -95,13 +194,18 @@ final class NetworkService {
         }
     }
 
-    func loadOffers(
+    private func loadOffersLegacy(
         from sourceCode: String,
         to targetCode: String,
         completion: @escaping (Result<[P2POffer], NetworkServiceError>) -> Void
     ) {
         loadMarketPairs { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                DispatchQueue.main.async {
+                    completion(.failure(.unknown))
+                }
+                return
+            }
             switch result {
             case let .success(pairs):
                 guard let marketRate = self.resolveRate(
@@ -141,7 +245,12 @@ final class NetworkService {
         }
 
         DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.4) { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                DispatchQueue.main.async {
+                    completion(.failure(.unknown))
+                }
+                return
+            }
             if Bool.random() {
                 let result = wallet.exchange(
                     from: sourceCode,
@@ -167,6 +276,47 @@ final class NetworkService {
 // MARK: - Private
 
 private extension NetworkService {
+    private func loadMarketPairsPublisher() -> AnyPublisher<[MarketPair], NetworkServiceError> {
+        guard let url = URL(string: "https://api.binance.com/api/v3/ticker/price") else {
+            return Fail(error: .unknown).eraseToAnyPublisher()
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 12
+
+        return session.dataTaskPublisher(for: request)
+            .tryMap { [weak self] output -> Data in
+                if let mapped = self?.mapError(error: nil, response: output.response) {
+                    throw mapped
+                }
+                return output.data
+            }
+            .decode(type: [BinanceTickerDTO].self, decoder: JSONDecoder())
+            .tryMap { [weak self] decoded -> [MarketPair] in
+                guard let self else {
+                    throw NetworkServiceError.unknown
+                }
+                let pairs = decoded.compactMap { ticker -> MarketPair? in
+                    guard let value = Double(ticker.price) else { return nil }
+                    guard let parsed = self.parseSymbol(ticker.symbol) else { return nil }
+                    guard value > 0 else { return nil }
+                    return MarketPair(base: parsed.base, quote: parsed.quote, price: value)
+                }
+                guard !pairs.isEmpty else {
+                    throw NetworkServiceError.parsing
+                }
+                self.cacheQueue.async {
+                    self.cachedPairs = pairs
+                }
+                return pairs
+            }
+            .mapError { [weak self] error in
+                self?.mapCombineError(error) ?? .unknown
+            }
+            .eraseToAnyPublisher()
+    }
+
     private func loadMarketPairs(completion: @escaping (Result<[MarketPair], NetworkServiceError>) -> Void) {
         guard let url = URL(string: "https://api.binance.com/api/v3/ticker/price") else {
             completion(.failure(.unknown))
@@ -178,7 +328,10 @@ private extension NetworkService {
         request.timeoutInterval = 12
 
         session.dataTask(with: request) { [weak self] data, response, error in
-            guard let self else { return }
+            guard let self else {
+                completion(.failure(.unknown))
+                return
+            }
             if let mapped = self.mapError(error: error, response: response) {
                 completion(.failure(mapped))
                 return
@@ -211,6 +364,19 @@ private extension NetworkService {
         }.resume()
     }
 
+    func mapCombineError(_ error: Error) -> NetworkServiceError {
+        if let serviceError = error as? NetworkServiceError {
+            return serviceError
+        }
+        if let urlError = error as? URLError {
+            return mapError(error: urlError, response: nil) ?? .unknown
+        }
+        if error is DecodingError {
+            return .parsing
+        }
+        return .unknown
+    }
+
     func performFailedRequest(completion: @escaping (NetworkServiceError) -> Void) {
         let urlString = "https://p2p-exchange.invalid/fail"
 
@@ -224,7 +390,10 @@ private extension NetworkService {
         request.timeoutInterval = 8
 
         session.dataTask(with: request) { [weak self] _, response, error in
-            guard let self else { return }
+            guard let self else {
+                completion(.unknown)
+                return
+            }
             if let mapped = self.mapError(error: error, response: response) {
                 completion(mapped)
                 return

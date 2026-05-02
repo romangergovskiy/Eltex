@@ -1,4 +1,24 @@
 import UIKit
+import Combine
+
+final class AuthFormViewModel {
+    @Published var login: String = ""
+    @Published var password: String = ""
+    @Published private(set) var isSubmitEnabled: Bool = false
+
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        Publishers.CombineLatest($login, $password)
+            .map { login, password in
+                let normalizedLogin = login.trimmingCharacters(in: .whitespacesAndNewlines)
+                let normalizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
+                return normalizedLogin.count >= 3 && normalizedPassword.count >= 6
+            }
+            .assign(to: \.isSubmitEnabled, on: self)
+            .store(in: &cancellables)
+    }
+}
 
 final class AuthViewController: UIViewController {
 
@@ -14,6 +34,8 @@ final class AuthViewController: UIViewController {
     private let actionButton = UIButton(type: .system)
     private let modeControl = UISegmentedControl(items: ["Вход", "Регистрация"])
     private let stackView = UIStackView()
+    private let viewModel = AuthFormViewModel()
+    private var cancellables = Set<AnyCancellable>()
 
     init(authManager: AuthSessionManager) {
         self.authManager = authManager
@@ -29,6 +51,7 @@ final class AuthViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        bindUI()
         fillLoginIfPossible()
     }
 }
@@ -83,6 +106,8 @@ private extension AuthViewController {
         actionButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
         actionButton.backgroundColor = UIColor(red: 0.19, green: 0.48, blue: 0.96, alpha: 1)
         actionButton.layer.cornerRadius = 12
+        actionButton.isEnabled = false
+        actionButton.alpha = 0.6
         actionButton.addTarget(self, action: #selector(actionTapped), for: .touchUpInside)
 
         modeControl.selectedSegmentIndex = AuthMode.signIn.rawValue
@@ -125,13 +150,26 @@ private extension AuthViewController {
     func fillLoginIfPossible() {
         if let login = authManager.storedLogin() {
             loginField.text = login
+            viewModel.login = login
         }
     }
 
-    func validate(login: String, password: String) -> Bool {
-        let normalizedLogin = login.trimmingCharacters(in: .whitespacesAndNewlines)
-        let normalizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
-        return normalizedLogin.count >= 3 && normalizedPassword.count >= 6
+    func bindUI() {
+        loginField.textPublisher
+            .assign(to: \.login, on: viewModel)
+            .store(in: &cancellables)
+
+        passwordField.textPublisher
+            .assign(to: \.password, on: viewModel)
+            .store(in: &cancellables)
+
+        viewModel.$isSubmitEnabled
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isEnabled in
+                self?.actionButton.isEnabled = isEnabled
+                self?.actionButton.alpha = isEnabled ? 1.0 : 0.6
+            }
+            .store(in: &cancellables)
     }
 
     func showValidationAlert() {
@@ -145,10 +183,10 @@ private extension AuthViewController {
     }
 
     @objc func actionTapped() {
-        let login = loginField.text ?? ""
-        let password = passwordField.text ?? ""
+        let login = viewModel.login
+        let password = viewModel.password
 
-        guard validate(login: login, password: password) else {
+        guard viewModel.isSubmitEnabled else {
             showValidationAlert()
             return
         }
@@ -179,5 +217,13 @@ extension AuthViewController: UITextFieldDelegate {
             return true
         }
         return false
+    }
+}
+
+private extension UITextField {
+    var textPublisher: AnyPublisher<String, Never> {
+        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: self)
+            .map { ($0.object as? UITextField)?.text ?? "" }
+            .eraseToAnyPublisher()
     }
 }

@@ -1,0 +1,23 @@
+{
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Charts/ChartData.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.swiftdeps"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Charts/Views/CandleView.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.swiftdeps"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Charts/Views/LineChartView.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.swiftdeps"
+  }
+}

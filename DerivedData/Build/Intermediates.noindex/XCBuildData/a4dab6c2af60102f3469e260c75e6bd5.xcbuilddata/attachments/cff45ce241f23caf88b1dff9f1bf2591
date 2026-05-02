@@ -1,0 +1,229 @@
+{
+  "" : {
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/eltex_hw-primary.dia",
+    "emit-module-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/eltex_hw-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/eltex_hw-primary-emit-module.dia",
+    "pch" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/eltex_hw-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/eltex_hw-primary.swiftdeps"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/AppDelegate.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AppDelegate.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AppDelegate.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AppDelegate.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Auth/AuthSessionManager.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthSessionManager.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthSessionManager.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthSessionManager.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthSessionManager.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthSessionManager.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthSessionManager.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthSessionManager.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthSessionManager~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Cells/FavoriteFilterView.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/FavoriteFilterView.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/FavoriteFilterView.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/FavoriteFilterView.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/FavoriteFilterView.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/FavoriteFilterView.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/FavoriteFilterView.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/FavoriteFilterView.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/FavoriteFilterView~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Cells/P2POfferTableViewCell.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2POfferTableViewCell.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2POfferTableViewCell.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2POfferTableViewCell.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2POfferTableViewCell.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2POfferTableViewCell.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2POfferTableViewCell.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2POfferTableViewCell.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2POfferTableViewCell~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Cells/PairAssetCollectionCell.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/PairAssetCollectionCell.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/PairAssetCollectionCell.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/PairAssetCollectionCell.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/PairAssetCollectionCell.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/PairAssetCollectionCell.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/PairAssetCollectionCell.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/PairAssetCollectionCell.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/PairAssetCollectionCell~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Cells/TradeTableViewCell.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/TradeTableViewCell.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/TradeTableViewCell.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/TradeTableViewCell.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/TradeTableViewCell.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/TradeTableViewCell.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/TradeTableViewCell.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/TradeTableViewCell.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/TradeTableViewCell~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Charts/ChartData.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartData~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Charts/Views/CandleCollectionViewCell.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleCollectionViewCell.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleCollectionViewCell.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleCollectionViewCell.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleCollectionViewCell.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleCollectionViewCell.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleCollectionViewCell.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleCollectionViewCell.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleCollectionViewCell~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Charts/Views/CandleView.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CandleView~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Charts/Views/LineChartView.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/LineChartView~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Core.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/Core.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/Core.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/Core.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/Core.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/Core.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/Core.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/Core.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/Core~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Network/NetworkService.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/NetworkService.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/NetworkService.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/NetworkService.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/NetworkService.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/NetworkService.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/NetworkService.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/NetworkService.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/NetworkService~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/SceneDelegate.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SceneDelegate.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SceneDelegate.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SceneDelegate.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SceneDelegate.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SceneDelegate.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SceneDelegate.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SceneDelegate.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SceneDelegate~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/AuthViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthViewController.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthViewController.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthViewController.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthViewController.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/AuthViewController~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/ChartsViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartsViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartsViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartsViewController.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartsViewController.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartsViewController.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartsViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartsViewController.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ChartsViewController~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/CurrencyPairsViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/P2PExchangeViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/SettingsViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/SplashScreenViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/ViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController~partial.swiftmodule"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/WalletViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.dia",
+    "index-unit-output-path" : "/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.o",
+    "llvm-bc" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.bc",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.swiftdeps",
+    "swiftmodule" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController~partial.swiftmodule"
+  }
+}

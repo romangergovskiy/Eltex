@@ -1,0 +1,23 @@
+{
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/CurrencyPairsViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/CurrencyPairsViewController.swiftdeps"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/P2PExchangeViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/P2PExchangeViewController.swiftdeps"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/SettingsViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SettingsViewController.swiftdeps"
+  }
+}

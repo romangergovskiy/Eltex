@@ -3,6 +3,7 @@ import Foundation
 // MARK: - Trading Config
 
 enum AppConfig {
+    static let isNetworkWithCombine = true  //true - Combine.
     static let minOperationsPerDay = 200
     static let maxOperationsPerDay = 500
     static let numberOfDays = 20

@@ -1,0 +1,23 @@
+{
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/SplashScreenViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/SplashScreenViewController.swiftdeps"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/ViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/ViewController.swiftdeps"
+  },
+  "/Users/romangergovskij/Downloads/Eltex-repo/eltex_hw/Screens/WalletViewController.swift" : {
+    "const-values" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.swiftconstvalues",
+    "dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.d",
+    "diagnostics" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.dia",
+    "object" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.o",
+    "swift-dependencies" : "/Users/romangergovskij/Downloads/Eltex-repo/DerivedData/Build/Intermediates.noindex/eltex_hw.build/Debug-iphoneos/eltex_hw.build/Objects-normal/arm64/WalletViewController.swiftdeps"
+  }
+}
