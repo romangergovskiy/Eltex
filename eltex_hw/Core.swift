@@ -3,7 +3,18 @@ import Foundation
 // MARK: - Trading Config
 
 enum AppConfig {
-    static let isNetworkWithCombine = true  //true - Combine.
+    private static let networkModeKey = "app.network.combine.enabled"
+    static var isNetworkWithCombine: Bool {
+        get {
+            if UserDefaults.standard.object(forKey: networkModeKey) == nil {
+                return true
+            }
+            return UserDefaults.standard.bool(forKey: networkModeKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: networkModeKey)
+        }
+    }
     static let minOperationsPerDay = 200
     static let maxOperationsPerDay = 500
     static let numberOfDays = 20

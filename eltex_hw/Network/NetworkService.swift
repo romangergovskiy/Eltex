@@ -64,7 +64,6 @@ final class NetworkService {
     }
 
     private let session: URLSession
-    private let isNetworkWithCombine: Bool
     private let cacheQueue = DispatchQueue(label: "network.service.cache.queue")
     private var cachedPairs: [MarketPair] = []
     private var cachedAssets: [PairAsset] = []
@@ -72,15 +71,14 @@ final class NetworkService {
 
     // MARK: Lifecycle
 
-    init(session: URLSession = .shared, isNetworkWithCombine: Bool = AppConfig.isNetworkWithCombine) {
+    init(session: URLSession = .shared) {
         self.session = session
-        self.isNetworkWithCombine = isNetworkWithCombine
     }
 
     // MARK: Public
 
     func loadAvailableAssets(completion: @escaping (Result<[PairAsset], NetworkServiceError>) -> Void) {
-        if isNetworkWithCombine {
+        if AppConfig.isNetworkWithCombine {
             let requestID = UUID()
             let cancellable = loadAvailableAssetsPublisher()
                 .receive(on: DispatchQueue.main)
@@ -106,7 +104,7 @@ final class NetworkService {
         to targetCode: String,
         completion: @escaping (Result<[P2POffer], NetworkServiceError>) -> Void
     ) {
-        if isNetworkWithCombine {
+        if AppConfig.isNetworkWithCombine {
             let requestID = UUID()
             let cancellable = loadOffersPublisher(from: sourceCode, to: targetCode)
                 .receive(on: DispatchQueue.main)
