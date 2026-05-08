@@ -22,7 +22,18 @@ final class P2PCoordinator: Coordinator, P2PExchangeRouting {
     init(navigationController: UINavigationController, wallet: Wallet) {
         self.navigationController = navigationController
         self.wallet = wallet
-        self.viewModel = P2PExchangeViewModel(wallet: wallet)
+        let gateway = NetworkP2PExchangeGateway(networkService: NetworkService())
+        let mapper = DefaultP2POfferDataMapper()
+        let repository = DefaultP2PExchangeRepository(gateway: gateway, mapper: mapper)
+        let loadAssetsUseCase = DefaultLoadP2PAssetsUseCase(repository: repository)
+        let loadOffersUseCase = DefaultLoadP2POffersUseCase(repository: repository)
+        let executeTradeUseCase = DefaultExecuteP2PTradeUseCase(repository: repository)
+        self.viewModel = P2PExchangeViewModel(
+            wallet: wallet,
+            loadAssetsUseCase: loadAssetsUseCase,
+            loadOffersUseCase: loadOffersUseCase,
+            executeTradeUseCase: executeTradeUseCase
+        )
     }
 
     func start() {

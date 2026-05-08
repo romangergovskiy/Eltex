@@ -3,7 +3,9 @@ import UIKit
 final class P2PExchangeViewController: UIViewController {
     weak var coordinator: P2PExchangeRouting?
     private let viewModel: P2PExchangeViewModel
-    private var state = P2PExchangeViewState(pairText: "USD-BTC", balancesText: "", offers: [], isLoading: false)
+    private var state: P2PExchangeViewState = .idle(P2PExchangeViewData(pairText: "USD-BTC", balancesText: "", offers: []))
+    private var viewData = P2PExchangeViewData(pairText: "USD-BTC", balancesText: "", offers: [])
+    private var lastShownErrorMessage: String?
 
     private let pairContainerView = UIView()
     private let pairTitleLabel = UILabel()
@@ -47,10 +49,8 @@ private extension P2PExchangeViewController {
         viewModel.onStateChange = { [weak self] newState in
             guard let self else { return }
             self.state = newState
+            self.viewData = newState.viewData
             self.render(state: newState)
-        }
-        viewModel.onError = { [weak self] error in
-            self?.showNetworkError(error)
         }
         viewModel.onTradeSuccess = { [weak self] result in
             self?.showSuccessResult(result: result)
@@ -58,18 +58,29 @@ private extension P2PExchangeViewController {
     }
 
     func render(state: P2PExchangeViewState) {
-        pairValueLabel.text = state.pairText
-        balancesLabel.text = state.balancesText
+        let data = state.viewData
+        pairValueLabel.text = data.pairText
+        balancesLabel.text = data.balancesText
         tableView.reloadData()
-        let isEmpty = state.offers.isEmpty
+        let isEmpty = data.offers.isEmpty
         emptyStateLabel.isHidden = !isEmpty
         tableView.isHidden = isEmpty
-        refreshButton.isEnabled = !state.isLoading
-        pairContainerView.isUserInteractionEnabled = !state.isLoading
-        if state.isLoading {
+        let isLoading = state.isLoading
+        refreshButton.isEnabled = !isLoading
+        pairContainerView.isUserInteractionEnabled = !isLoading
+        if isLoading {
             loadingIndicator.startAnimating()
         } else {
             loadingIndicator.stopAnimating()
+        }
+        if case let .error(_, error) = state {
+            let message = "\(error.title)-\(error.message)"
+            if lastShownErrorMessage != message {
+                lastShownErrorMessage = message
+                showNetworkError(error)
+            }
+        } else {
+            lastShownErrorMessage = nil
         }
     }
 
@@ -305,11 +316,11 @@ extension P2PExchangeViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        state.offers.count
+        viewData.offers.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        state.offers.isEmpty ? nil : "Предложения продавцов"
+        viewData.offers.isEmpty ? nil : "Предложения продавцов"
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -319,10 +330,14 @@ extension P2PExchangeViewController: UITableViewDataSource {
         ) as? P2POfferTableViewCell else {
             return UITableViewCell()
         }
-        let offer = state.offers[indexPath.row]
+        let offer = viewData.offers[indexPath.row]
         let codes = viewModel.pairCodes()
         cell.configure(offer: offer, sourceCode: codes.source, targetCode: codes.target)
-        cell.accessoryType = .detailButton
+        cell.onDetailsTap = { [weak self] in
+            guard let self else { return }
+            let pairCodes = self.viewModel.pairCodes()
+            self.coordinator?.showSellerInfo(offer: offer, sourceCode: pairCodes.source, targetCode: pairCodes.target)
+        }
         return cell
     }
 }
@@ -330,14 +345,8 @@ extension P2PExchangeViewController: UITableViewDataSource {
 extension P2PExchangeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let offer = state.offers[indexPath.row]
+        let offer = viewData.offers[indexPath.row]
         showTradeInput(for: offer)
-    }
-
-    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        guard let offer = viewModel.offer(at: indexPath.row) else { return }
-        let codes = viewModel.pairCodes()
-        coordinator?.showSellerInfo(offer: offer, sourceCode: codes.source, targetCode: codes.target)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -345,7 +354,7 @@ extension P2PExchangeViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        116
+        202
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
