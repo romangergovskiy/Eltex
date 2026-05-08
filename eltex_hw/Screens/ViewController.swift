@@ -1,8 +1,16 @@
 import UIKit
 
 final class ViewController: UIViewController {
-
-    // MARK: - Properties
+    weak var coordinator: TradingBotRouting?
+    private let viewModel: TradingBotViewModel
+    private var state = TradingBotViewState(
+        pairText: "USD-BTC",
+        botsCountText: "Ботов: 0",
+        statusText: "",
+        dailyResults: [],
+        isFirstRun: true,
+        controlsEnabled: true
+    )
 
     private let headerImageView = UIImageView()
     private let containerView = UIView()
@@ -19,24 +27,12 @@ final class ViewController: UIViewController {
     private let emptyStateLabel = UILabel()
     private let botsCounterLabel = UILabel()
 
-    private var isFirstRun = true
-    private var statusText = ""
-    private var dailyResults: [BotDayResult] = []
-    private var bots: [TradingBot] = []
-    private let wallet: Wallet
-    private lazy var tradingEngine = TradingEngine(config: AppConfig.tradingConfig)
-
-    private let allAssets = PairAssetFactory.makeList(minCount: 140)
-    private let defaultFirstCode = "USD"
-    private let defaultSecondCode = "BTC"
-    private var firstAsset: PairAsset = PairAsset(code: "USD", category: .fiat)
-    private var secondAsset: PairAsset = PairAsset(code: "BTC", category: .crypto)
     private var isCompactLayout: Bool {
         view.bounds.height <= 700
     }
 
-    init(wallet: Wallet) {
-        self.wallet = wallet
+    init(viewModel: TradingBotViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -44,18 +40,13 @@ final class ViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Lifecycle
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupInitialPair()
-        configureDefaultBotsForCurrentPair()
         setupUI()
         setupNavigationBar()
         setupGestures()
-        updatePairText()
-        updateBotsCounter()
-        updateEmptyState()
+        bindViewModel()
+        viewModel.viewDidLoad()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -67,13 +58,27 @@ final class ViewController: UIViewController {
 }
 
 private extension ViewController {
+    func bindViewModel() {
+        viewModel.onStateChange = { [weak self] newState in
+            guard let self else { return }
+            self.state = newState
+            self.render(state: newState)
+        }
+        viewModel.onError = { [weak self] message in
+            self?.showError(message)
+        }
+    }
 
-    // MARK: - Setup
-
-    func setupInitialPair() {
-        let fallback = allAssets.first ?? PairAsset(code: "USD", category: .fiat)
-        firstAsset = allAssets.first(where: { $0.code == defaultFirstCode }) ?? fallback
-        secondAsset = allAssets.first(where: { $0.code == defaultSecondCode }) ?? allAssets.first(where: { $0.code != firstAsset.code }) ?? fallback
+    func render(state: TradingBotViewState) {
+        pairValueLabel.text = state.pairText
+        botsCounterLabel.text = state.botsCountText
+        tableView.reloadData()
+        let shouldShowEmpty = state.isFirstRun && state.statusText.isEmpty && state.dailyResults.isEmpty
+        emptyStateLabel.isHidden = !shouldShowEmpty
+        tableView.isHidden = shouldShowEmpty
+        runButton.isEnabled = state.controlsEnabled
+        runButton.alpha = state.controlsEnabled ? 1.0 : 0.65
+        setControlsEnabled(state.controlsEnabled)
     }
 
     func setupUI() {
@@ -334,97 +339,36 @@ private extension ViewController {
 }
 
 private extension ViewController {
-
-    // MARK: - Actions
-
     @objc func runTapped() {
-        if bots.isEmpty {
-            configureDefaultBotsForCurrentPair()
-            updateBotsCounter()
-        }
-
-        guard botSwitch.isOn else {
-            showError("Включите переключатель бота перед запуском.")
-            return
-        }
-
-        runButton.isEnabled = false
-        runButton.alpha = 0.65
-        setControlsEnabled(false)
-        statusText = "Выполняем расчеты... Ботов: \(bots.count), дней: \(AppConfig.numberOfDays), операций в день: \(AppConfig.minOperationsPerDay)-\(AppConfig.maxOperationsPerDay)"
-        isFirstRun = false
-        dailyResults = []
-        tableView.reloadData()
-        updateEmptyState()
-
-        tradingEngine.run(
-            bots: bots,
-            wallet: wallet,
-            progress: { [weak self] day, totalDays in
-                guard let self else { return }
-                self.statusText = "Выполняем расчеты... день \(day)/\(totalDays), ботов: \(self.bots.count), операций в день: \(AppConfig.minOperationsPerDay)-\(AppConfig.maxOperationsPerDay)"
-                self.tableView.reloadSections(IndexSet(integer: 0), with: .none)
-            },
-            completion: { [weak self] results in
-            guard let self else { return }
-            self.dailyResults = results
-            self.runButton.isEnabled = true
-            self.runButton.alpha = 1.0
-            self.setControlsEnabled(true)
-            self.statusText = "Готово. Выполнено результатов: \(results.count)."
-            self.updateEmptyState()
-            self.tableView.reloadData()
-        })
+        viewModel.runTrading(isEnabled: botSwitch.isOn)
     }
 
     @objc func pairSelectionTapped() {
-        let compactSelector = CurrencyPairsViewController(
-            mode: .compact,
-            allAssets: allAssets,
-            firstAsset: firstAsset,
-            secondAsset: secondAsset,
-            selectedSide: .first
+        let input = viewModel.pairSelectionInput()
+        coordinator?.showCompactPairSelector(
+            delegate: self,
+            allAssets: input.allAssets,
+            firstAsset: input.first,
+            secondAsset: input.second
         )
-        compactSelector.delegate = self
-
-        let presentedNavigation = UINavigationController(rootViewController: compactSelector)
-        presentedNavigation.modalPresentationStyle = .pageSheet
-        if let sheet = presentedNavigation.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-        }
-        present(presentedNavigation, animated: true)
     }
 
     @objc func resetTapped() {
-        setupInitialPair()
-        updatePairText()
-        bots = []
-        wallet.reset(to: AppConfig.initialWalletBalances)
-        updateBotsCounter()
-        resetTradingState()
+        viewModel.reset()
     }
 
     @objc func randomPairTapped() {
-        guard allAssets.count > 1 else { return }
-        let first = allAssets.randomElement() ?? allAssets[0]
-        let others = allAssets.filter { $0.code != first.code }
-        let second = others.randomElement() ?? first
-        applyPairChange(first: first, second: second)
+        viewModel.randomPair()
     }
 
     @objc func openChartTapped() {
-        let chartsViewController = ChartsViewController()
-        chartsViewController.title = "График"
-        chartsViewController.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewController(chartsViewController, animated: true)
+        coordinator?.showCharts()
     }
 
     @objc func addBotTapped() {
         let alert = UIAlertController(
             title: "Новый бот",
-            message: "Введите уникальное имя. Бот будет привязан к текущей паре \(firstAsset.code)-\(secondAsset.code).",
+            message: "Введите уникальное имя. Бот будет привязан к текущей паре \(state.pairText).",
             preferredStyle: .alert
         )
         alert.addTextField {
@@ -436,114 +380,18 @@ private extension ViewController {
         alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
         alert.addAction(UIAlertAction(title: "Добавить", style: .default) { [weak self, weak alert] _ in
             guard let self else { return }
-            let input = alert?.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            guard !input.isEmpty else {
-                self.showError("Имя бота не может быть пустым.")
-                return
-            }
-
-            guard !self.bots.contains(where: { $0.setup.name.lowercased() == input.lowercased() }) else {
-                self.showError("Бот с таким именем уже есть.")
-                return
-            }
-
-            let setup = BotSetup(
-                name: input,
-                baseCurrency: self.firstAsset.code,
-                quoteCurrency: self.secondAsset.code,
-                baseCategory: self.firstAsset.category,
-                quoteCategory: self.secondAsset.category
-            )
-            self.bots.append(TradingBot(setup: setup, wallet: self.wallet))
-            self.updateBotsCounter()
-            self.statusText = "Добавлен бот \(input) для пары \(setup.pairCode)."
-            self.isFirstRun = false
-            self.updateEmptyState()
-            self.tableView.reloadData()
+            let input = alert?.textFields?.first?.text ?? ""
+            self.viewModel.addBot(name: input)
         })
         present(alert, animated: true)
     }
 
     @objc func openWalletTapped() {
-        let walletController = WalletViewController(wallet: wallet)
-        let navController = UINavigationController(rootViewController: walletController)
-        navController.modalPresentationStyle = .pageSheet
-        present(navController, animated: true)
+        coordinator?.showWallet()
     }
 
     @objc func handleSwipeUp() {
         openChartTapped()
-    }
-
-    func applyPairChange(first: PairAsset, second: PairAsset) {
-        guard first.code != second.code else { return }
-
-        let didChange = first.code != firstAsset.code || second.code != secondAsset.code
-        firstAsset = first
-        secondAsset = second
-        updatePairText()
-
-        if didChange {
-            migrateSomeBotsToCurrentPair(count: 3)
-            updateBotsCounter()
-            resetTradingState()
-        }
-    }
-
-    func updatePairText() {
-        pairValueLabel.text = "\(firstAsset.code)-\(secondAsset.code)"
-    }
-
-    func updateBotsCounter() {
-        botsCounterLabel.text = "Ботов: \(bots.count)"
-    }
-
-    func configureDefaultBotsForCurrentPair() {
-        guard bots.isEmpty else { return }
-        let pairShort = "\(firstAsset.code)\(secondAsset.code)"
-        bots = (1...AppConfig.defaultBotsPerPair).map { index in
-            let setup = BotSetup(
-                name: "Bot\(pairShort)\(index)",
-                baseCurrency: firstAsset.code,
-                quoteCurrency: secondAsset.code,
-                baseCategory: firstAsset.category,
-                quoteCategory: secondAsset.category
-            )
-            return TradingBot(setup: setup, wallet: wallet)
-        }
-    }
-
-    func migrateSomeBotsToCurrentPair(count: Int) {
-        guard !bots.isEmpty else { return }
-
-        let migrateCount = min(max(0, count), bots.count)
-        guard migrateCount > 0 else { return }
-
-        for index in 0..<migrateCount {
-            let previous = bots[index]
-            let updatedSetup = BotSetup(
-                name: previous.setup.name,
-                baseCurrency: firstAsset.code,
-                quoteCurrency: secondAsset.code,
-                baseCategory: firstAsset.category,
-                quoteCategory: secondAsset.category
-            )
-            bots[index] = TradingBot(setup: updatedSetup, wallet: wallet)
-        }
-    }
-
-    func resetTradingState() {
-        isFirstRun = true
-        statusText = ""
-        dailyResults = []
-        updateEmptyState()
-        tableView.reloadData()
-    }
-
-    func updateEmptyState() {
-        let shouldShowEmpty = isFirstRun && statusText.isEmpty && dailyResults.isEmpty
-        emptyStateLabel.isHidden = !shouldShowEmpty
-        tableView.isHidden = shouldShowEmpty
     }
 
     func showError(_ message: String) {
@@ -560,8 +408,6 @@ private extension ViewController {
 }
 
 extension ViewController: UITableViewDataSource {
-    // MARK: - UITableViewDataSource
-
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -569,9 +415,9 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return statusText.isEmpty ? 0 : 1
+            return state.statusText.isEmpty ? 0 : 1
         case 1:
-            return dailyResults.isEmpty ? 0 : dailyResults.count
+            return state.dailyResults.isEmpty ? 0 : state.dailyResults.count
         default:
             return 0
         }
@@ -580,9 +426,9 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return statusText.isEmpty ? nil : "Статус"
+            return state.statusText.isEmpty ? nil : "Статус"
         case 1:
-            return dailyResults.isEmpty ? nil : "Результаты по дням и ботам"
+            return state.dailyResults.isEmpty ? nil : "Результаты по дням и ботам"
         default:
             return nil
         }
@@ -591,7 +437,7 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "StatusCell", for: indexPath)
-            cell.textLabel?.text = statusText
+            cell.textLabel?.text = state.statusText
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.font = .systemFont(ofSize: 16)
             cell.textLabel?.textAlignment = .center
@@ -607,14 +453,12 @@ extension ViewController: UITableViewDataSource {
         ) as? TradeTableViewCell else {
             return UITableViewCell()
         }
-        cell.configure(with: dailyResults[indexPath.row])
+        cell.configure(with: state.dailyResults[indexPath.row])
         return cell
     }
 }
 
 extension ViewController: UITableViewDelegate {
-    // MARK: - UITableViewDelegate
-
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         UITableView.automaticDimension
     }
@@ -631,14 +475,12 @@ extension ViewController: UITableViewDelegate {
 }
 
 extension ViewController: CurrencyPairsViewControllerDelegate {
-    // MARK: - CurrencyPairsViewControllerDelegate
-
     func currencyPairsViewController(
         _ controller: CurrencyPairsViewController,
         didUpdateFirstAsset firstAsset: PairAsset,
         secondAsset: PairAsset
     ) {
-        applyPairChange(first: firstAsset, second: secondAsset)
+        viewModel.applyPair(first: firstAsset, second: secondAsset)
     }
 
     func currencyPairsViewControllerDidRequestFullList(
@@ -649,17 +491,14 @@ extension ViewController: CurrencyPairsViewControllerDelegate {
     ) {
         dismiss(animated: true) { [weak self] in
             guard let self else { return }
-            let fullSelector = CurrencyPairsViewController(
-                mode: .full,
-                allAssets: self.allAssets,
+            let allAssets = self.viewModel.pairSelectionInput().allAssets
+            self.coordinator?.showFullPairSelector(
+                delegate: self,
+                allAssets: allAssets,
                 firstAsset: firstAsset,
                 secondAsset: secondAsset,
-                selectedSide: selectedSide,
-                startsWithFavoritesOnly: true
+                selectedSide: selectedSide
             )
-            fullSelector.navigationItem.largeTitleDisplayMode = .never
-            fullSelector.delegate = self
-            self.navigationController?.pushViewController(fullSelector, animated: true)
         }
     }
 }

@@ -1,18 +1,9 @@
 import UIKit
 
 final class P2PExchangeViewController: UIViewController {
-
-    // MARK: - Properties
-
-    private let wallet: Wallet
-    private let networkService: NetworkService
-
-    private let allAssets = PairAssetFactory.makeList(minCount: 140)
-    private var apiAssets: [PairAsset] = []
-    private var offers: [P2POffer] = []
-
-    private var firstAsset = PairAsset(code: "USD", category: .fiat)
-    private var secondAsset = PairAsset(code: "BTC", category: .crypto)
+    weak var coordinator: P2PExchangeRouting?
+    private let viewModel: P2PExchangeViewModel
+    private var state = P2PExchangeViewState(pairText: "USD-BTC", balancesText: "", offers: [], isLoading: false)
 
     private let pairContainerView = UIView()
     private let pairTitleLabel = UILabel()
@@ -26,11 +17,8 @@ final class P2PExchangeViewController: UIViewController {
     private let emptyStateLabel = UILabel()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
 
-    // MARK: - Lifecycle
-
-    init(wallet: Wallet, networkService: NetworkService = NetworkService()) {
-        self.wallet = wallet
-        self.networkService = networkService
+    init(viewModel: P2PExchangeViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -42,23 +30,48 @@ final class P2PExchangeViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupNavigationBar()
-        updatePairText()
-        updateBalances()
-        loadAssetsAndOffers()
+        bindViewModel()
+        viewModel.viewDidLoad()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        updateBalances()
+        viewModel.viewWillAppear()
     }
 }
 
-// MARK: - Private
-
 private extension P2PExchangeViewController {
-    // MARK: Setup
+    func bindViewModel() {
+        viewModel.onStateChange = { [weak self] newState in
+            guard let self else { return }
+            self.state = newState
+            self.render(state: newState)
+        }
+        viewModel.onError = { [weak self] error in
+            self?.showNetworkError(error)
+        }
+        viewModel.onTradeSuccess = { [weak self] result in
+            self?.showSuccessResult(result: result)
+        }
+    }
+
+    func render(state: P2PExchangeViewState) {
+        pairValueLabel.text = state.pairText
+        balancesLabel.text = state.balancesText
+        tableView.reloadData()
+        let isEmpty = state.offers.isEmpty
+        emptyStateLabel.isHidden = !isEmpty
+        tableView.isHidden = isEmpty
+        refreshButton.isEnabled = !state.isLoading
+        pairContainerView.isUserInteractionEnabled = !state.isLoading
+        if state.isLoading {
+            loadingIndicator.startAnimating()
+        } else {
+            loadingIndicator.stopAnimating()
+        }
+    }
 
     func setupUI() {
         view.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
@@ -198,90 +211,6 @@ private extension P2PExchangeViewController {
         )
     }
 
-    // MARK: Data
-
-    func loadAssetsAndOffers() {
-        setLoading(true)
-        networkService.loadAvailableAssets { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case let .success(assets):
-                self.apiAssets = assets
-                self.alignPairWithAvailableAssets()
-                self.reloadOffers()
-            case let .failure(error):
-                self.setLoading(false)
-                self.showNetworkError(error)
-            }
-        }
-    }
-
-    func alignPairWithAvailableAssets() {
-        guard !apiAssets.isEmpty else { return }
-        if !apiAssets.contains(where: { $0.code == firstAsset.code }) {
-            firstAsset = apiAssets.first ?? firstAsset
-        }
-        if !apiAssets.contains(where: { $0.code == secondAsset.code }) || secondAsset.code == firstAsset.code {
-            secondAsset = apiAssets.first(where: { $0.code != firstAsset.code }) ?? secondAsset
-        }
-        updatePairText()
-        updateBalances()
-    }
-
-    func reloadOffers() {
-        setLoading(true)
-        networkService.loadOffers(from: firstAsset.code, to: secondAsset.code) { [weak self] result in
-            guard let self else { return }
-            self.setLoading(false)
-            switch result {
-            case let .success(offers):
-                self.offers = offers
-                self.updateEmptyState()
-                self.tableView.reloadData()
-            case let .failure(error):
-                self.offers = []
-                self.updateEmptyState()
-                self.tableView.reloadData()
-                self.showNetworkError(error)
-            }
-        }
-    }
-
-    func updatePairText() {
-        pairValueLabel.text = "\(firstAsset.code)-\(secondAsset.code)"
-    }
-
-    func updateBalances() {
-        let pairBalances = wallet.pairBalances(base: firstAsset.code, quote: secondAsset.code)
-        let source = pairBalances[firstAsset.code, default: 0]
-        let target = pairBalances[secondAsset.code, default: 0]
-        balancesLabel.text = String(
-            format: "Баланс: %@ %.2f\nБаланс: %@ %.2f",
-            firstAsset.code,
-            source,
-            secondAsset.code,
-            target
-        )
-    }
-
-    func updateEmptyState() {
-        let isEmpty = offers.isEmpty
-        emptyStateLabel.isHidden = !isEmpty
-        tableView.isHidden = isEmpty
-    }
-
-    func setLoading(_ loading: Bool) {
-        refreshButton.isEnabled = !loading
-        pairContainerView.isUserInteractionEnabled = !loading
-        if loading {
-            loadingIndicator.startAnimating()
-        } else {
-            loadingIndicator.stopAnimating()
-        }
-    }
-
-    // MARK: Alerts
-
     func showNetworkError(_ error: NetworkServiceError) {
         let alert = UIAlertController(title: error.title, message: error.message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ок", style: .default))
@@ -289,13 +218,14 @@ private extension P2PExchangeViewController {
     }
 
     func showTradeInput(for offer: P2POffer) {
+        let codes = viewModel.pairCodes()
         let message = String(
             format: "Курс %.6f %@ за 1 %@\nРезерв продавца: %.2f %@",
             offer.rate,
-            secondAsset.code,
-            firstAsset.code,
+            codes.target,
+            codes.source,
             offer.reserve,
-            secondAsset.code
+            codes.target
         )
         let alert = UIAlertController(
             title: offer.sellerName,
@@ -303,7 +233,7 @@ private extension P2PExchangeViewController {
             preferredStyle: .alert
         )
         alert.addTextField {
-            $0.placeholder = "Сумма в \(self.firstAsset.code)"
+            $0.placeholder = "Сумма в \(codes.source)"
             $0.keyboardType = .decimalPad
             $0.delegate = self
             $0.addTarget(self, action: #selector(self.exchangeAmountChanged(_:)), for: .editingChanged)
@@ -317,39 +247,19 @@ private extension P2PExchangeViewController {
                 self.showPlainError("Введите корректную сумму.")
                 return
             }
-            self.executeTrade(amount: amount, offer: offer)
+            self.viewModel.executeTrade(amount: amount, offer: offer)
         })
         present(alert, animated: true)
     }
 
-    func executeTrade(amount: Double, offer: P2POffer) {
-        setLoading(true)
-        networkService.executeExchange(
-            wallet: wallet,
-            from: firstAsset.code,
-            to: secondAsset.code,
-            amount: amount,
-            rate: offer.rate
-        ) { [weak self] result in
-            guard let self else { return }
-            self.setLoading(false)
-            switch result {
-            case let .success(exchangeResult):
-                self.updateBalances()
-                self.showSuccessResult(result: exchangeResult)
-            case let .failure(error):
-                self.showNetworkError(error)
-            }
-        }
-    }
-
     func showSuccessResult(result: WalletExchangeResult) {
+        let codes = viewModel.pairCodes()
         let message = String(
             format: "Списано: %.2f %@\nПолучено: %.2f %@",
             result.spent,
-            firstAsset.code,
+            codes.source,
             result.received,
-            secondAsset.code
+            codes.target
         )
         let alert = UIAlertController(title: "Обмен выполнен", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ок", style: .default))
@@ -362,31 +272,23 @@ private extension P2PExchangeViewController {
         present(alert, animated: true)
     }
 
-    // MARK: Actions
-
     @objc func selectPairTapped() {
-        let controller = CurrencyPairsViewController(
-            mode: .full,
-            allAssets: allAssets,
-            firstAsset: firstAsset,
-            secondAsset: secondAsset,
-            selectedSide: .first,
-            startsWithFavoritesOnly: false,
-            apiAssets: apiAssets
+        let input = viewModel.pairSelectionInput()
+        coordinator?.showP2PPairSelector(
+            delegate: self,
+            allAssets: input.allAssets,
+            firstAsset: input.first,
+            secondAsset: input.second,
+            apiAssets: input.apiAssets
         )
-        controller.delegate = self
-        navigationController?.pushViewController(controller, animated: true)
     }
 
     @objc func refreshTapped() {
-        reloadOffers()
+        viewModel.refreshOffers()
     }
 
     @objc func openWalletTapped() {
-        let walletController = WalletViewController(wallet: wallet)
-        let navController = UINavigationController(rootViewController: walletController)
-        navController.modalPresentationStyle = .pageSheet
-        present(navController, animated: true)
+        coordinator?.showP2PWallet()
     }
 
     @objc func exchangeAmountChanged(_ textField: UITextField) {
@@ -397,19 +299,17 @@ private extension P2PExchangeViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
-
 extension P2PExchangeViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        offers.count
+        state.offers.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        offers.isEmpty ? nil : "Предложения продавцов"
+        state.offers.isEmpty ? nil : "Предложения продавцов"
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -419,19 +319,25 @@ extension P2PExchangeViewController: UITableViewDataSource {
         ) as? P2POfferTableViewCell else {
             return UITableViewCell()
         }
-        let offer = offers[indexPath.row]
-        cell.configure(offer: offer, sourceCode: firstAsset.code, targetCode: secondAsset.code)
+        let offer = state.offers[indexPath.row]
+        let codes = viewModel.pairCodes()
+        cell.configure(offer: offer, sourceCode: codes.source, targetCode: codes.target)
+        cell.accessoryType = .detailButton
         return cell
     }
 }
 
-// MARK: - UITableViewDelegate
-
 extension P2PExchangeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let offer = offers[indexPath.row]
+        let offer = state.offers[indexPath.row]
         showTradeInput(for: offer)
+    }
+
+    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        guard let offer = viewModel.offer(at: indexPath.row) else { return }
+        let codes = viewModel.pairCodes()
+        coordinator?.showSellerInfo(offer: offer, sourceCode: codes.source, targetCode: codes.target)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -449,19 +355,13 @@ extension P2PExchangeViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - CurrencyPairsViewControllerDelegate
-
 extension P2PExchangeViewController: CurrencyPairsViewControllerDelegate {
     func currencyPairsViewController(
         _ controller: CurrencyPairsViewController,
         didUpdateFirstAsset firstAsset: PairAsset,
         secondAsset: PairAsset
     ) {
-        self.firstAsset = firstAsset
-        self.secondAsset = secondAsset
-        updatePairText()
-        updateBalances()
-        reloadOffers()
+        viewModel.applyPair(first: firstAsset, second: secondAsset)
     }
 
     func currencyPairsViewControllerDidRequestFullList(
@@ -472,8 +372,6 @@ extension P2PExchangeViewController: CurrencyPairsViewControllerDelegate {
     ) {
     }
 }
-
-// MARK: - UITextFieldDelegate
 
 extension P2PExchangeViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
