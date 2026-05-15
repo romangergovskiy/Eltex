@@ -53,9 +53,9 @@ protocol P2PExchangeGateway {
 }
 
 final class NetworkP2PExchangeGateway: P2PExchangeGateway {
-    private let networkService: NetworkService
+    private let networkService: NetworkServiceProtocol
 
-    init(networkService: NetworkService) {
+    init(networkService: NetworkServiceProtocol) {
         self.networkService = networkService
     }
 
@@ -335,7 +335,10 @@ final class P2PExchangeViewModel {
         lastError = nil
         loadOffersUseCase.execute(pair: pair) { [weak self] result in
             guard let self else { return }
-            guard self.offersRequestToken == requestToken else { return }
+            guard self.offersRequestToken == requestToken else {
+                self.finishLoading()
+                return
+            }
             self.finishLoading()
             self.hasLoadedOffers = true
             switch result {

@@ -50,7 +50,24 @@ struct P2POffer {
 
 // MARK: - Service
 
-final class NetworkService {
+protocol NetworkServiceProtocol: AnyObject {
+    func loadAvailableAssets(completion: @escaping (Result<[PairAsset], NetworkServiceError>) -> Void)
+    func loadOffers(
+        from sourceCode: String,
+        to targetCode: String,
+        completion: @escaping (Result<[P2POffer], NetworkServiceError>) -> Void
+    )
+    func executeExchange(
+        wallet: Wallet,
+        from sourceCode: String,
+        to targetCode: String,
+        amount: Double,
+        rate: Double,
+        completion: @escaping (Result<WalletExchangeResult, NetworkServiceError>) -> Void
+    )
+}
+
+final class NetworkService: NetworkServiceProtocol {
 
     private struct MarketPair {
         let base: String
