@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import OSLog
 
 // MARK: - Errors
 
@@ -37,6 +38,23 @@ enum NetworkServiceError: Error {
             return "Сервис временно недоступен."
         case .unknown:
             return "Не удалось выполнить запрос."
+        }
+    }
+}
+
+extension NetworkServiceError {
+    var logCode: String {
+        switch self {
+        case .noInternet:
+            return "noInternet"
+        case .parsing:
+            return "parsing"
+        case .forbidden:
+            return "forbidden"
+        case .server:
+            return "server"
+        case .unknown:
+            return "unknown"
         }
     }
 }
@@ -95,6 +113,7 @@ final class NetworkService: NetworkServiceProtocol {
     // MARK: Public
 
     func loadAvailableAssets(completion: @escaping (Result<[PairAsset], NetworkServiceError>) -> Void) {
+        AppLogger.network.info("loadAvailableAssets started. useCombine=\(AppConfig.isNetworkWithCombine, privacy: .public)")
         if AppConfig.isNetworkWithCombine {
             let requestID = UUID()
             let cancellable = loadAvailableAssetsPublisher()
@@ -103,10 +122,12 @@ final class NetworkService: NetworkServiceProtocol {
                     receiveCompletion: { [weak self] completionResult in
                         self?.activeRequests.removeValue(forKey: requestID)
                         if case let .failure(error) = completionResult {
+                            AppLogger.network.error("loadAvailableAssets failed. error=\(error.logCode, privacy: .public)")
                             completion(.failure(error))
                         }
                     },
                     receiveValue: { assets in
+                        AppLogger.network.info("loadAvailableAssets success. count=\(assets.count, privacy: .public)")
                         completion(.success(assets))
                     }
                 )
@@ -121,6 +142,7 @@ final class NetworkService: NetworkServiceProtocol {
         to targetCode: String,
         completion: @escaping (Result<[P2POffer], NetworkServiceError>) -> Void
     ) {
+        AppLogger.network.info("loadOffers started. pair=\(sourceCode, privacy: .public)-\(targetCode, privacy: .public), useCombine=\(AppConfig.isNetworkWithCombine, privacy: .public)")
         if AppConfig.isNetworkWithCombine {
             let requestID = UUID()
             let cancellable = loadOffersPublisher(from: sourceCode, to: targetCode)
@@ -129,10 +151,12 @@ final class NetworkService: NetworkServiceProtocol {
                     receiveCompletion: { [weak self] completionResult in
                         self?.activeRequests.removeValue(forKey: requestID)
                         if case let .failure(error) = completionResult {
+                            AppLogger.network.error("loadOffers failed. pair=\(sourceCode, privacy: .public)-\(targetCode, privacy: .public), error=\(error.logCode, privacy: .public)")
                             completion(.failure(error))
                         }
                     },
                     receiveValue: { offers in
+                        AppLogger.network.info("loadOffers success. pair=\(sourceCode, privacy: .public)-\(targetCode, privacy: .public), count=\(offers.count, privacy: .public)")
                         completion(.success(offers))
                     }
                 )
@@ -255,12 +279,15 @@ final class NetworkService: NetworkServiceProtocol {
         completion: @escaping (Result<WalletExchangeResult, NetworkServiceError>) -> Void
     ) {
         guard amount > 0, rate > 0 else {
+            AppLogger.network.error("executeExchange validation failed. amount=\(amount, privacy: .public), rate=\(rate, privacy: .public)")
             completion(.failure(.parsing))
             return
         }
+        AppLogger.network.info("executeExchange started. pair=\(sourceCode, privacy: .public)-\(targetCode, privacy: .public), amount=\(amount, privacy: .public), rate=\(rate, privacy: .public)")
 
         DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.4) { [weak self] in
             guard let self else {
+                AppLogger.network.error("executeExchange failed. self deallocated")
                 DispatchQueue.main.async {
                     completion(.failure(.unknown))
                 }
@@ -274,6 +301,7 @@ final class NetworkService: NetworkServiceProtocol {
                     rate: rate
                 )
                 DispatchQueue.main.async {
+                    AppLogger.network.info("executeExchange success. spent=\(result.spent, privacy: .public), received=\(result.received, privacy: .public)")
                     completion(.success(result))
                 }
                 return
@@ -281,6 +309,7 @@ final class NetworkService: NetworkServiceProtocol {
 
             self.performFailedRequest { error in
                 DispatchQueue.main.async {
+                    AppLogger.network.error("executeExchange failed through fallback request. error=\(error.logCode, privacy: .public)")
                     completion(.failure(error))
                 }
             }
@@ -334,6 +363,7 @@ private extension NetworkService {
 
     private func loadMarketPairs(completion: @escaping (Result<[MarketPair], NetworkServiceError>) -> Void) {
         guard let url = URL(string: "https://api.binance.com/api/v3/ticker/price") else {
+            AppLogger.network.error("loadMarketPairs failed. invalid URL")
             completion(.failure(.unknown))
             return
         }
@@ -344,15 +374,18 @@ private extension NetworkService {
 
         session.dataTask(with: request) { [weak self] data, response, error in
             guard let self else {
+                AppLogger.network.error("loadMarketPairs failed. self deallocated")
                 completion(.failure(.unknown))
                 return
             }
             if let mapped = self.mapError(error: error, response: response) {
+                AppLogger.network.error("loadMarketPairs failed. mappedError=\(mapped.logCode, privacy: .public)")
                 completion(.failure(mapped))
                 return
             }
 
             guard let data else {
+                AppLogger.network.error("loadMarketPairs failed. response data missing")
                 completion(.failure(.parsing))
                 return
             }
@@ -366,6 +399,7 @@ private extension NetworkService {
                     return MarketPair(base: parsed.base, quote: parsed.quote, price: value)
                 }
                 guard !pairs.isEmpty else {
+                    AppLogger.network.error("loadMarketPairs failed. parsed pair list is empty")
                     completion(.failure(.parsing))
                     return
                 }
@@ -374,6 +408,7 @@ private extension NetworkService {
                 }
                 completion(.success(pairs))
             } catch {
+                AppLogger.network.error("loadMarketPairs decoding failed")
                 completion(.failure(.parsing))
             }
         }.resume()
@@ -396,6 +431,7 @@ private extension NetworkService {
         let urlString = "https://p2p-exchange.invalid/fail"
 
         guard let url = URL(string: urlString) else {
+            AppLogger.network.error("performFailedRequest failed. invalid URL")
             completion(.unknown)
             return
         }
@@ -406,13 +442,16 @@ private extension NetworkService {
 
         session.dataTask(with: request) { [weak self] _, response, error in
             guard let self else {
+                AppLogger.network.error("performFailedRequest failed. self deallocated")
                 completion(.unknown)
                 return
             }
             if let mapped = self.mapError(error: error, response: response) {
+                AppLogger.network.error("performFailedRequest completed with mapped error=\(mapped.logCode, privacy: .public)")
                 completion(mapped)
                 return
             }
+            AppLogger.network.error("performFailedRequest completed with unknown error")
             completion(.unknown)
         }.resume()
     }

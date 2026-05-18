@@ -1,4 +1,5 @@
 import UIKit
+import OSLog
 
 final class P2PExchangeViewController: UIViewController {
     weak var coordinator: P2PExchangeRouting?
@@ -30,6 +31,7 @@ final class P2PExchangeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        AppLogger.p2p.info("P2PExchangeViewController did load")
         setupUI()
         setupNavigationBar()
         bindViewModel()
@@ -38,6 +40,7 @@ final class P2PExchangeViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        AppLogger.p2p.debug("P2PExchangeViewController will appear")
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         viewModel.viewWillAppear()
@@ -223,6 +226,7 @@ private extension P2PExchangeViewController {
     }
 
     func showNetworkError(_ error: NetworkServiceError) {
+        AppLogger.p2p.error("P2P screen error alert shown. error=\(error.logCode, privacy: .public)")
         let alert = UIAlertController(title: error.title, message: error.message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ок", style: .default))
         present(alert, animated: true)
@@ -255,15 +259,18 @@ private extension P2PExchangeViewController {
             let rawAmount = alert?.textFields?.first?.text ?? ""
             let normalizedAmount = rawAmount.replacingOccurrences(of: ",", with: ".")
             guard let amount = Double(normalizedAmount), amount > 0 else {
+                AppLogger.p2p.error("Trade input validation failed. invalid amount=\(rawAmount, privacy: .public)")
                 self.showPlainError("Введите корректную сумму.")
                 return
             }
+            AppLogger.p2p.info("Trade input accepted. amount=\(amount, privacy: .public)")
             self.viewModel.executeTrade(amount: amount, offer: offer)
         })
         present(alert, animated: true)
     }
 
     func showSuccessResult(result: WalletExchangeResult) {
+        AppLogger.p2p.info("Trade success alert shown. spent=\(result.spent, privacy: .public), received=\(result.received, privacy: .public)")
         let codes = viewModel.pairCodes()
         let message = String(
             format: "Списано: %.2f %@\nПолучено: %.2f %@",
@@ -278,12 +285,14 @@ private extension P2PExchangeViewController {
     }
 
     func showPlainError(_ message: String) {
+        AppLogger.p2p.error("Plain error alert shown. message=\(message, privacy: .public)")
         let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ок", style: .default))
         present(alert, animated: true)
     }
 
     @objc func selectPairTapped() {
+        AppLogger.p2p.info("Pair selection requested")
         let input = viewModel.pairSelectionInput()
         coordinator?.showP2PPairSelector(
             delegate: self,
@@ -295,10 +304,12 @@ private extension P2PExchangeViewController {
     }
 
     @objc func refreshTapped() {
+        AppLogger.p2p.info("Refresh button tapped")
         viewModel.refreshOffers()
     }
 
     @objc func openWalletTapped() {
+        AppLogger.p2p.info("Open wallet tapped from P2P screen")
         coordinator?.showP2PWallet()
     }
 

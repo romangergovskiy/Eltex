@@ -1,5 +1,6 @@
 import Foundation
 import Security
+import OSLog
 
 enum AuthMode: Int {
     case signIn = 0
@@ -37,7 +38,9 @@ final class AuthSessionManager {
     }
 
     func canAutoLogin() -> Bool {
-        autoLoginEnabled && defaults.bool(forKey: Keys.didAuthorize) && hasCredentials()
+        let canLogin = autoLoginEnabled && defaults.bool(forKey: Keys.didAuthorize) && hasCredentials()
+        AppLogger.auth.info("Auto login check completed. enabled=\(self.autoLoginEnabled, privacy: .public), result=\(canLogin, privacy: .public)")
+        return canLogin
     }
 
     func hasCredentials() -> Bool {
@@ -47,28 +50,42 @@ final class AuthSessionManager {
     func register(login: String, password: String) -> Bool {
         let normalizedLogin = login.trimmingCharacters(in: .whitespacesAndNewlines)
         let normalizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !normalizedLogin.isEmpty, !normalizedPassword.isEmpty else { return false }
+        guard !normalizedLogin.isEmpty, !normalizedPassword.isEmpty else {
+            AppLogger.auth.error("Registration failed. login or password is empty")
+            return false
+        }
 
-        guard savePassword(normalizedPassword) else { return false }
+        guard savePassword(normalizedPassword) else {
+            AppLogger.auth.error("Registration failed. unable to save password for login=\(normalizedLogin, privacy: .private)")
+            return false
+        }
         defaults.set(normalizedLogin, forKey: Keys.login)
         defaults.set(true, forKey: Keys.didAuthorize)
+        AppLogger.auth.info("Registration completed for login=\(normalizedLogin, privacy: .private)")
         return true
     }
 
     func signIn(login: String, password: String) -> Bool {
         let normalizedLogin = login.trimmingCharacters(in: .whitespacesAndNewlines)
         let normalizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let storedLogin = storedLogin(), let storedPassword = loadPassword() else { return false }
+        guard let storedLogin = storedLogin(), let storedPassword = loadPassword() else {
+            AppLogger.auth.error("Sign in failed. credentials are missing in storage")
+            return false
+        }
 
         let isValid = normalizedLogin == storedLogin && normalizedPassword == storedPassword
         if isValid {
             defaults.set(true, forKey: Keys.didAuthorize)
+            AppLogger.auth.info("Sign in success for login=\(normalizedLogin, privacy: .private)")
+        } else {
+            AppLogger.auth.error("Sign in failed. invalid credentials for login=\(normalizedLogin, privacy: .private)")
         }
         return isValid
     }
 
     func signOut() {
         defaults.set(false, forKey: Keys.didAuthorize)
+        AppLogger.auth.info("Sign out completed")
     }
 
     private func savePassword(_ password: String) -> Bool {
@@ -89,6 +106,11 @@ final class AuthSessionManager {
         ]
 
         let status = SecItemAdd(addQuery as CFDictionary, nil)
+        if status == errSecSuccess {
+            AppLogger.auth.debug("Password saved in keychain")
+        } else {
+            AppLogger.auth.error("Keychain save failed. status=\(status, privacy: .public)")
+        }
         return status == errSecSuccess
     }
 
@@ -106,8 +128,10 @@ final class AuthSessionManager {
         guard status == errSecSuccess,
               let data = item as? Data,
               let password = String(data: data, encoding: .utf8) else {
+            AppLogger.auth.error("Keychain load failed. status=\(status, privacy: .public)")
             return nil
         }
+        AppLogger.auth.debug("Password loaded from keychain")
         return password
     }
 }

@@ -1,5 +1,6 @@
 import UIKit
 import Combine
+import OSLog
 
 final class AuthFormViewModel {
     @Published var login: String = ""
@@ -50,6 +51,7 @@ final class AuthViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        AppLogger.auth.info("Auth screen did load")
         setupUI()
         bindUI()
         fillLoginIfPossible()
@@ -151,6 +153,9 @@ private extension AuthViewController {
         if let login = authManager.storedLogin() {
             loginField.text = login
             viewModel.login = login
+            AppLogger.auth.info("Stored login restored on auth screen")
+        } else {
+            AppLogger.auth.debug("No stored login found")
         }
     }
 
@@ -173,6 +178,7 @@ private extension AuthViewController {
     }
 
     func showValidationAlert() {
+        AppLogger.auth.error("Validation failed on auth form")
         let alert = UIAlertController(
             title: "Некорректные данные",
             message: "Логин: минимум 3 символа. Пароль: минимум 6 символов.",
@@ -192,14 +198,21 @@ private extension AuthViewController {
         }
 
         let mode = AuthMode(rawValue: modeControl.selectedSegmentIndex) ?? .signIn
+        AppLogger.auth.info("Auth action started. mode=\(String(describing: mode), privacy: .public), loginLength=\(login.count, privacy: .public)")
         switch mode {
         case .signIn:
             if authManager.signIn(login: login, password: password) {
+                AppLogger.auth.info("Auth action finished successfully. mode=signIn")
                 onAuthorized?()
+            } else {
+                AppLogger.auth.error("Auth action failed. mode=signIn")
             }
         case .signUp:
             if authManager.register(login: login, password: password) {
+                AppLogger.auth.info("Auth action finished successfully. mode=signUp")
                 onAuthorized?()
+            } else {
+                AppLogger.auth.error("Auth action failed. mode=signUp")
             }
         }
     }

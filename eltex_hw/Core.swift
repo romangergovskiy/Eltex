@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 // MARK: - Trading Config
 
@@ -333,4 +334,14 @@ enum PairAssetFactory {
             }
         )
     }
+}
+
+// MARK: - Logging
+
+enum AppLogger {
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "com.roma.eltex-hw-10"
+    static let auth = Logger(subsystem: subsystem, category: "auth")
+    static let p2p = Logger(subsystem: subsystem, category: "p2p")
+    static let network = Logger(subsystem: subsystem, category: "network")
+    static let common = Logger(subsystem: subsystem, category: "common")
 }

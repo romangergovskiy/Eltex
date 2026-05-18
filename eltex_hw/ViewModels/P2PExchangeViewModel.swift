@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 struct P2PExchangeViewData {
     let pairText: String
@@ -60,18 +61,22 @@ final class NetworkP2PExchangeGateway: P2PExchangeGateway {
     }
 
     func fetchAssets(completion: @escaping (Result<[PairAsset], NetworkServiceError>) -> Void) {
+        AppLogger.p2p.info("Gateway fetch assets started")
         networkService.loadAvailableAssets(completion: completion)
     }
 
     func fetchOffers(pair: P2PPair, completion: @escaping (Result<[P2POfferDTO], NetworkServiceError>) -> Void) {
+        AppLogger.p2p.info("Gateway fetch offers started. pair=\(pair.sourceCode, privacy: .public)-\(pair.targetCode, privacy: .public)")
         networkService.loadOffers(from: pair.sourceCode, to: pair.targetCode) { result in
             switch result {
             case let .success(offers):
                 let dto = offers.map {
                     P2POfferDTO(id: $0.id, seller: $0.sellerName, price: $0.rate, reserveAmount: $0.reserve)
                 }
+                AppLogger.p2p.info("Gateway fetch offers success. count=\(dto.count, privacy: .public)")
                 completion(.success(dto))
             case let .failure(error):
+                AppLogger.p2p.error("Gateway fetch offers failed. error=\(error.logCode, privacy: .public)")
                 completion(.failure(error))
             }
         }
@@ -84,6 +89,7 @@ final class NetworkP2PExchangeGateway: P2PExchangeGateway {
         rate: Double,
         completion: @escaping (Result<WalletExchangeResult, NetworkServiceError>) -> Void
     ) {
+        AppLogger.p2p.info("Gateway trade started. pair=\(pair.sourceCode, privacy: .public)-\(pair.targetCode, privacy: .public), amount=\(amount, privacy: .public), rate=\(rate, privacy: .public)")
         networkService.executeExchange(
             wallet: wallet,
             from: pair.sourceCode,
@@ -251,15 +257,19 @@ final class P2PExchangeViewModel {
     }
 
     func viewDidLoad() {
+        AppLogger.p2p.info("P2P screen viewDidLoad")
         emitState()
         loadAssetsAndOffers()
     }
 
     func viewWillAppear() {
+        AppLogger.p2p.debug("P2P screen viewWillAppear")
         emitState()
     }
 
     func refreshOffers() {
+        let pair = pairCodes()
+        AppLogger.p2p.info("Offers refresh requested. pair=\(pair.source, privacy: .public)-\(pair.target, privacy: .public)")
         reloadOffers()
     }
 
@@ -268,9 +278,13 @@ final class P2PExchangeViewModel {
     }
 
     func applyPair(first: PairAsset, second: PairAsset) {
-        guard first.code != second.code else { return }
+        guard first.code != second.code else {
+            AppLogger.p2p.error("Pair update rejected. source equals target=\(first.code, privacy: .public)")
+            return
+        }
         firstAsset = first
         secondAsset = second
+        AppLogger.p2p.info("Pair updated. pair=\(first.code, privacy: .public)-\(second.code, privacy: .public)")
         lastError = nil
         emitState()
         reloadOffers()
@@ -278,6 +292,7 @@ final class P2PExchangeViewModel {
 
     func executeTrade(amount: Double, offer: P2POffer) {
         let pair = P2PPair(sourceCode: firstAsset.code, targetCode: secondAsset.code)
+        AppLogger.p2p.info("Trade execution started. seller=\(offer.sellerName, privacy: .public), pair=\(pair.sourceCode, privacy: .public)-\(pair.targetCode, privacy: .public), amount=\(amount, privacy: .public), rate=\(offer.rate, privacy: .public)")
         beginLoading()
         lastError = nil
         executeTradeUseCase.execute(wallet: wallet, pair: pair, amount: amount, rate: offer.rate) { [weak self] result in
@@ -285,9 +300,11 @@ final class P2PExchangeViewModel {
             self.finishLoading()
             switch result {
             case let .success(exchangeResult):
+                AppLogger.p2p.info("Trade execution success. spent=\(exchangeResult.spent, privacy: .public), received=\(exchangeResult.received, privacy: .public)")
                 self.emitState()
                 self.onTradeSuccess?(exchangeResult)
             case let .failure(error):
+                AppLogger.p2p.error("Trade execution failed. error=\(error.logCode, privacy: .public)")
                 self.lastError = error
                 self.emitState()
             }
@@ -299,6 +316,7 @@ final class P2PExchangeViewModel {
     }
 
     private func loadAssetsAndOffers() {
+        AppLogger.p2p.info("Assets loading started")
         beginLoading()
         lastError = nil
         loadAssetsUseCase.execute { [weak self] result in
@@ -306,10 +324,12 @@ final class P2PExchangeViewModel {
             self.finishLoading()
             switch result {
             case let .success(assets):
+                AppLogger.p2p.info("Assets loading success. count=\(assets.count, privacy: .public)")
                 self.apiAssets = assets
                 self.alignPairWithAvailableAssets()
                 self.reloadOffers()
             case let .failure(error):
+                AppLogger.p2p.error("Assets loading failed. error=\(error.logCode, privacy: .public)")
                 self.lastError = error
                 self.emitState()
             }
@@ -318,11 +338,16 @@ final class P2PExchangeViewModel {
 
     private func alignPairWithAvailableAssets() {
         guard !apiAssets.isEmpty else { return }
+        let before = "\(firstAsset.code)-\(secondAsset.code)"
         if !apiAssets.contains(where: { $0.code == firstAsset.code }) {
             firstAsset = apiAssets.first ?? firstAsset
         }
         if !apiAssets.contains(where: { $0.code == secondAsset.code }) || secondAsset.code == firstAsset.code {
             secondAsset = apiAssets.first(where: { $0.code != firstAsset.code }) ?? secondAsset
+        }
+        let after = "\(firstAsset.code)-\(secondAsset.code)"
+        if before != after {
+            AppLogger.p2p.info("Pair aligned with API assets. old=\(before, privacy: .public), new=\(after, privacy: .public)")
         }
         emitState()
     }
@@ -331,11 +356,13 @@ final class P2PExchangeViewModel {
         let requestToken = UUID()
         offersRequestToken = requestToken
         let pair = P2PPair(sourceCode: firstAsset.code, targetCode: secondAsset.code)
+        AppLogger.p2p.info("Offers loading started. pair=\(pair.sourceCode, privacy: .public)-\(pair.targetCode, privacy: .public)")
         beginLoading()
         lastError = nil
         loadOffersUseCase.execute(pair: pair) { [weak self] result in
             guard let self else { return }
             guard self.offersRequestToken == requestToken else {
+                AppLogger.p2p.debug("Outdated offers response ignored")
                 self.finishLoading()
                 return
             }
@@ -343,10 +370,12 @@ final class P2PExchangeViewModel {
             self.hasLoadedOffers = true
             switch result {
             case let .success(offers):
+                AppLogger.p2p.info("Offers loading success. count=\(offers.count, privacy: .public)")
                 self.offers = offers
                 self.lastError = nil
                 self.emitState()
             case let .failure(error):
+                AppLogger.p2p.error("Offers loading failed. error=\(error.logCode, privacy: .public)")
                 self.offers = []
                 self.lastError = error
                 self.emitState()
