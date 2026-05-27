@@ -6,27 +6,43 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		EE10000A2F90000000FD1E77 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD0732692F8657DA00FD1E77 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD0732702F8657DA00FD1E77;
+			remoteInfo = eltex_hw;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		DD0732712F8657DA00FD1E77 /* Heatmap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Heatmap.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD0732712F8657DA00FD1E77 /* eltex_hw.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eltex_hw.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE1000012F90000000FD1E77 /* eltex_hwTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = eltex_hwTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		DD0732832F8657DC00FD1E77 /* Exceptions for "Heatmap" folder in "Heatmap" target */ = {
+		DD0732832F8657DC00FD1E77 /* Exceptions for "eltex_hw" folder in "eltex_hw" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = DD0732702F8657DA00FD1E77 /* Heatmap */;
+			target = DD0732702F8657DA00FD1E77 /* eltex_hw */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DD0732732F8657DA00FD1E77 /* Heatmap */ = {
+		DD0732732F8657DA00FD1E77 /* eltex_hw */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				DD0732832F8657DC00FD1E77 /* Exceptions for "Heatmap" folder in "Heatmap" target */,
+				DD0732832F8657DC00FD1E77 /* Exceptions for "eltex_hw" folder in "eltex_hw" target */,
 			);
-			path = Heatmap;
+			path = eltex_hw;
+			sourceTree = "<group>";
+		};
+		EE1000022F90000000FD1E77 /* eltex_hwTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = eltex_hwTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -39,13 +55,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EE1000042F90000000FD1E77 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		DD0732682F8657DA00FD1E77 = {
 			isa = PBXGroup;
 			children = (
-				DD0732732F8657DA00FD1E77 /* Heatmap */,
+				DD0732732F8657DA00FD1E77 /* eltex_hw */,
+				EE1000022F90000000FD1E77 /* eltex_hwTests */,
 				DD0732722F8657DA00FD1E77 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,7 +77,8 @@
 		DD0732722F8657DA00FD1E77 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DD0732712F8657DA00FD1E77 /* Heatmap.app */,
+				DD0732712F8657DA00FD1E77 /* eltex_hw.app */,
+				EE1000012F90000000FD1E77 /* eltex_hwTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,9 +86,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DD0732702F8657DA00FD1E77 /* Heatmap */ = {
+		DD0732702F8657DA00FD1E77 /* eltex_hw */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "Heatmap" */;
+			buildConfigurationList = DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hw" */;
 			buildPhases = (
 				DD07326D2F8657DA00FD1E77 /* Sources */,
 				DD07326E2F8657DA00FD1E77 /* Frameworks */,
@@ -74,14 +99,37 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DD0732732F8657DA00FD1E77 /* Heatmap */,
+				DD0732732F8657DA00FD1E77 /* eltex_hw */,
 			);
-			name = Heatmap;
+			name = eltex_hw;
 			packageProductDependencies = (
 			);
-			productName = Heatmap;
-			productReference = DD0732712F8657DA00FD1E77 /* Heatmap.app */;
+			productName = eltex_hw;
+			productReference = DD0732712F8657DA00FD1E77 /* eltex_hw.app */;
 			productType = "com.apple.product-type.application";
+		};
+		EE1000032F90000000FD1E77 /* eltex_hwTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE1000082F90000000FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hwTests" */;
+			buildPhases = (
+				EE1000052F90000000FD1E77 /* Sources */,
+				EE1000042F90000000FD1E77 /* Frameworks */,
+				EE1000062F90000000FD1E77 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EE10000B2F90000000FD1E77 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EE1000022F90000000FD1E77 /* eltex_hwTests */,
+			);
+			name = eltex_hwTests;
+			packageProductDependencies = (
+			);
+			productName = eltex_hwTests;
+			productReference = EE1000012F90000000FD1E77 /* eltex_hwTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -96,9 +144,13 @@
 					DD0732702F8657DA00FD1E77 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
+					EE1000032F90000000FD1E77 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = DD0732702F8657DA00FD1E77;
+					};
 				};
 			};
-			buildConfigurationList = DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "Heatmap" */;
+			buildConfigurationList = DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "eltex_hw" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -112,13 +164,21 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DD0732702F8657DA00FD1E77 /* Heatmap */,
+				DD0732702F8657DA00FD1E77 /* eltex_hw */,
+				EE1000032F90000000FD1E77 /* eltex_hwTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DD07326F2F8657DA00FD1E77 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE1000062F90000000FD1E77 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +195,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EE1000052F90000000FD1E77 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EE10000B2F90000000FD1E77 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD0732702F8657DA00FD1E77 /* eltex_hw */;
+			targetProxy = EE10000A2F90000000FD1E77 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DD0732852F8657DC00FD1E77 /* Debug */ = {
@@ -145,9 +220,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = V95A42AD6Z;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Heatmap/Info.plist;
+				INFOPLIST_FILE = eltex_hw/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -158,7 +233,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.roma.heatmap;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-10";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -177,9 +252,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = V95A42AD6Z;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Heatmap/Info.plist;
+				INFOPLIST_FILE = eltex_hw/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -190,7 +265,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.roma.heatmap;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-10";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -237,7 +312,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = V95A42AD6Z;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -301,7 +376,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = V95A42AD6Z;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -323,10 +398,58 @@
 			};
 			name = Release;
 		};
+		EE1000092F90000000FD1E77 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V95A42AD6Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-10Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/eltex_hw.app/eltex_hw";
+			};
+			name = Debug;
+		};
+		EE10000C2F90000000FD1E77 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V95A42AD6Z;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.roma.eltex-hw-10Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/eltex_hw.app/eltex_hw";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "Heatmap" */ = {
+		DD07326C2F8657DA00FD1E77 /* Build configuration list for PBXProject "eltex_hw" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD0732872F8657DC00FD1E77 /* Debug */,
@@ -335,11 +458,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "Heatmap" */ = {
+		DD0732842F8657DC00FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hw" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD0732852F8657DC00FD1E77 /* Debug */,
 				DD0732862F8657DC00FD1E77 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EE1000082F90000000FD1E77 /* Build configuration list for PBXNativeTarget "eltex_hwTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE1000092F90000000FD1E77 /* Debug */,
+				EE10000C2F90000000FD1E77 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -6,16 +6,8 @@ struct HeatmapView: View {
             Color.black
                 .ignoresSafeArea()
 
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: true) {
                 VStack(spacing: 12) {
-                    Text("Heatmap")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-
                     VStack(spacing: 8) {
                         HStack(spacing: 8) {
                             CurrencyTileView(symbol: "BTC", change: "+2.4%", color: .green, width: 190, height: 150)
@@ -64,8 +56,8 @@ struct HeatmapView: View {
                     .background(Color.white.opacity(0.04))
                     .cornerRadius(16)
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
                 }
+                .padding(.bottom, 24)
             }
         }
     }
