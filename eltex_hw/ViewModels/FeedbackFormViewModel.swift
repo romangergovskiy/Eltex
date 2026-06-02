@@ -11,6 +11,7 @@ final class FeedbackFormViewModel: ObservableObject {
     @Published var messageText = ""
     @Published var isAgreementAccepted = false
     @Published var isAgreementPresented = false
+    @Published var selectedFeedbackDirections = Set<FeedbackDirection>()
     @Published private(set) var authorNameError: String?
     @Published private(set) var messageTextError: String?
 

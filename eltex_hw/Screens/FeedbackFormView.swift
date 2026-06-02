@@ -12,15 +12,17 @@ struct FeedbackFormView: View {
             Color(.systemGroupedBackground)
                 .ignoresSafeArea()
 
-            VStack(spacing: 16) {
-                authorNameField
-                messageField
-                agreementRow
-                submitButton
-
-                Spacer()
+            ScrollView {
+                VStack(spacing: 16) {
+                    authorNameField
+                    messageField
+                    directionSelectionField
+                    agreementRow
+                    submitButton
+                }
+                .frame(maxWidth: .infinity)
+                .padding(16)
             }
-            .padding(16)
 
             if viewModel.isAgreementPresented {
                 agreementOverlay
@@ -71,6 +73,11 @@ private extension FeedbackFormView {
                     .foregroundColor(.red)
             }
         }
+    }
+
+    var directionSelectionField: some View {
+        FeedbackDirectionSelectionViewWrapper(selectedDirections: $viewModel.selectedFeedbackDirections)
+            .frame(height: FeedbackDirectionSelectionView.Layout.totalHeight)
     }
 
     var messageField: some View {
