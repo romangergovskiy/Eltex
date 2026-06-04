@@ -1,9 +1,62 @@
 import Combine
+import CoreGraphics
 import Foundation
 
 enum FeedbackField: Hashable {
     case authorName
     case message
+}
+
+enum BotSwipeDirection: String, CaseIterable, Hashable {
+    case topToBottom
+    case bottomToTop
+    case leftToRight
+    case rightToLeft
+
+    var title: String {
+        switch self {
+        case .topToBottom:
+            return "сверху-вниз"
+        case .bottomToTop:
+            return "снизу-вверх"
+        case .leftToRight:
+            return "слева-направо"
+        case .rightToLeft:
+            return "справа-налево"
+        }
+    }
+}
+
+enum FeedbackSubmitAlert: Identifiable {
+    case success
+    case failure
+
+    var id: String {
+        switch self {
+        case .success:
+            return "success"
+        case .failure:
+            return "failure"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .success:
+            return "Готово"
+        case .failure:
+            return "Ошибка"
+        }
+    }
+
+    var message: String {
+        switch self {
+        case .success:
+            return "Сообщение отправлено"
+        case .failure:
+            return "Проверка не пройдена, попробуйте еще раз"
+        }
+    }
 }
 
 final class FeedbackFormViewModel: ObservableObject {
@@ -12,8 +65,12 @@ final class FeedbackFormViewModel: ObservableObject {
     @Published var isAgreementAccepted = false
     @Published var isAgreementPresented = false
     @Published var selectedFeedbackDirections = Set<FeedbackDirection>()
+    @Published var isBotCheckPresented = false
+    @Published var submitAlert: FeedbackSubmitAlert?
     @Published private(set) var authorNameError: String?
     @Published private(set) var messageTextError: String?
+    @Published private(set) var botCheckCommands: [BotSwipeDirection] = []
+    @Published private(set) var currentBotCheckIndex = 0
 
     var canSubmit: Bool {
         isAgreementAccepted
@@ -46,7 +103,36 @@ final class FeedbackFormViewModel: ObservableObject {
     func submit() -> Bool {
         showValidationError(for: .authorName)
         showValidationError(for: .message)
-        return canSubmit
+        guard canSubmit else { return false }
+        startBotCheck()
+        return true
+    }
+
+    func currentBotCheckDirectionTitle() -> String {
+        guard currentBotCheckIndex < botCheckCommands.count else { return "" }
+        return botCheckCommands[currentBotCheckIndex].title
+    }
+
+    func handleBotSwipe(translationWidth: CGFloat, translationHeight: CGFloat) {
+        guard isBotCheckPresented else { return }
+        guard let actualDirection = botSwipeDirection(
+            translationWidth: translationWidth,
+            translationHeight: translationHeight
+        ) else {
+            return
+        }
+        guard currentBotCheckIndex < botCheckCommands.count else { return }
+
+        let expectedDirection = botCheckCommands[currentBotCheckIndex]
+        guard actualDirection == expectedDirection else {
+            finishBotCheck(success: false)
+            return
+        }
+
+        currentBotCheckIndex += 1
+        if currentBotCheckIndex >= botCheckCommands.count {
+            finishBotCheck(success: true)
+        }
     }
 }
 
@@ -57,6 +143,8 @@ private extension FeedbackFormViewModel {
         static let minLength = 3
         static let maxNameLength = 30
         static let maxMessageLength = 150
+        static let botCheckCommandsCount = 3
+        static let minSwipeDistance: CGFloat = 40
     }
 
     var trimmedAuthorName: String {
@@ -105,6 +193,43 @@ private extension FeedbackFormViewModel {
             authorNameError = nil
         case .message:
             messageTextError = nil
+        }
+    }
+
+    func startBotCheck() {
+        botCheckCommands = Array(BotSwipeDirection.allCases.shuffled().prefix(Limits.botCheckCommandsCount))
+        currentBotCheckIndex = 0
+        isBotCheckPresented = true
+    }
+
+    func finishBotCheck(success: Bool) {
+        isBotCheckPresented = false
+        if success {
+            resetForm()
+            submitAlert = .success
+        } else {
+            submitAlert = .failure
+        }
+        botCheckCommands = []
+        currentBotCheckIndex = 0
+    }
+
+    func resetForm() {
+        authorName = ""
+        messageText = ""
+        selectedFeedbackDirections = []
+        isAgreementAccepted = false
+        authorNameError = nil
+        messageTextError = nil
+    }
+
+    func botSwipeDirection(translationWidth: CGFloat, translationHeight: CGFloat) -> BotSwipeDirection? {
+        if abs(translationWidth) > abs(translationHeight) {
+            guard abs(translationWidth) >= Limits.minSwipeDistance else { return nil }
+            return translationWidth > 0 ? .leftToRight : .rightToLeft
+        } else {
+            guard abs(translationHeight) >= Limits.minSwipeDistance else { return nil }
+            return translationHeight > 0 ? .topToBottom : .bottomToTop
         }
     }
 }

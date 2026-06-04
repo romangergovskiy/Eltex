@@ -2,10 +2,10 @@ import SwiftUI
 import UIKit
 
 struct FeedbackFormView: View {
-    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = FeedbackFormViewModel()
     @FocusState private var focusedField: FeedbackField?
     @State private var previousFocusedField: FeedbackField?
+    @State private var isBotSwipeActive = false
 
     var body: some View {
         ZStack {
@@ -23,13 +23,24 @@ struct FeedbackFormView: View {
                 .frame(maxWidth: .infinity)
                 .padding(16)
             }
+            .disabled(viewModel.isBotCheckPresented)
+            .opacity(viewModel.isBotCheckPresented ? 0.35 : 1)
+            .animation(.easeInOut(duration: 0.2), value: viewModel.isBotCheckPresented)
 
             if viewModel.isAgreementPresented {
                 agreementOverlay
+                    .transition(.opacity)
+            }
+
+            if viewModel.isBotCheckPresented {
+                botCheckOverlay
+                    .transition(.opacity)
             }
         }
         .navigationTitle("Обратная связь")
         .navigationBarTitleDisplayMode(.inline)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.isAgreementPresented)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.isBotCheckPresented)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
@@ -52,6 +63,13 @@ struct FeedbackFormView: View {
             guard let focusedField else { return }
             viewModel.keyboardWillHide(for: focusedField)
         }
+        .alert(item: $viewModel.submitAlert) { alert in
+            Alert(
+                title: Text(alert.title),
+                message: Text(alert.message),
+                dismissButton: .default(Text("OK"))
+            )
+        }
     }
 }
 
@@ -71,8 +89,10 @@ private extension FeedbackFormView {
                 Text(authorNameError)
                     .font(.caption)
                     .foregroundColor(.red)
+                    .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: viewModel.authorNameError)
     }
 
     var directionSelectionField: some View {
@@ -104,8 +124,10 @@ private extension FeedbackFormView {
                 Text(messageTextError)
                     .font(.caption)
                     .foregroundColor(.red)
+                    .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: viewModel.messageTextError)
     }
 
     var agreementRow: some View {
@@ -134,19 +156,21 @@ private extension FeedbackFormView {
 
     var submitButton: some View {
         Button(action: {
-            if viewModel.submit() {
-                dismiss()
-            }
+            focusedField = nil
+            _ = viewModel.submit()
         }) {
             Text("Отправить")
                 .font(.headline)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(viewModel.isAgreementAccepted ? Color.blue : Color.gray)
+                .background(viewModel.canSubmit ? Color.blue : Color.gray.opacity(0.75))
                 .cornerRadius(12)
+                .scaleEffect(viewModel.canSubmit ? 1 : 0.98)
+                .opacity(viewModel.canSubmit ? 1 : 0.85)
         }
-        .disabled(!viewModel.isAgreementAccepted)
+        .disabled(!viewModel.canSubmit)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.canSubmit)
     }
 }
 
@@ -186,6 +210,66 @@ private extension FeedbackFormView {
             .background(Color.white)
             .cornerRadius(16)
             .padding(.horizontal, 20)
+        }
+    }
+
+    var botCheckOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.35)
+                .ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                Text("Проверка на бота")
+                    .font(.headline)
+                    .multilineTextAlignment(.center)
+
+                Text("Следующая команда")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Text(viewModel.currentBotCheckDirectionTitle())
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
+                    .id(viewModel.currentBotCheckIndex)
+                    .transition(.opacity)
+
+                Rectangle()
+                    .fill(isBotSwipeActive ? Color.blue.opacity(0.3) : Color.secondary.opacity(0.12))
+                    .frame(maxWidth: .infinity)
+                    .aspectRatio(1, contentMode: .fit)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Color.gray.opacity(0.45), lineWidth: 1)
+                    )
+                    .cornerRadius(14)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 10)
+                            .onChanged { _ in
+                                withAnimation(.easeInOut(duration: 0.15)) {
+                                    isBotSwipeActive = true
+                                }
+                            }
+                            .onEnded { value in
+                                withAnimation(.easeInOut(duration: 0.15)) {
+                                    isBotSwipeActive = false
+                                }
+                                viewModel.handleBotSwipe(
+                                    translationWidth: value.translation.width,
+                                    translationHeight: value.translation.height
+                                )
+                            }
+                    )
+            }
+            .padding(20)
+            .frame(maxWidth: 360)
+            .background(Color.white)
+            .cornerRadius(16)
+            .padding(.horizontal, 20)
+            .animation(.easeInOut(duration: 0.2), value: viewModel.currentBotCheckIndex)
         }
     }
 
