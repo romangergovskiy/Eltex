@@ -8,10 +8,8 @@ final class TradeTableViewCell: UITableViewCell {
 
     private let cardView = UIView()
     private let titleLabel = UILabel()
-    private let priceLabel = UILabel()
-    private let detailsContainer = UIView()
-    private let resultLabel = UILabel()
-    private let balanceLabel = UILabel()
+    private let startLabel = UILabel()
+    private let endLabel = UILabel()
 
     // MARK: - Lifecycle
 
@@ -26,74 +24,24 @@ final class TradeTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        priceLabel.isHidden = false
-        detailsContainer.isHidden = false
-        priceLabel.text = nil
-        resultLabel.text = nil
-        balanceLabel.text = nil
+        titleLabel.text = nil
+        startLabel.text = nil
+        endLabel.text = nil
     }
 
     // MARK: - Configuration
 
-    func configure(with trade: TradeRecord) {
-        titleLabel.text = "#\(trade.index) • \(trade.action.title)"
+    func configure(with result: BotDayResult) {
+        let pairParts = result.pairCode.split(separator: "-").map(String.init)
+        let base = pairParts.first ?? "BASE"
+        let quote = pairParts.count > 1 ? pairParts[1] : result.quoteCurrency
 
-        switch trade.action {
-        case .buy:
-            configureTradeAction(
-                titleColor: .systemGreen,
-                cardColor: UIColor.systemGreen.withAlphaComponent(0.14),
-                trade: trade
-            )
-        case .sell:
-            configureTradeAction(
-                titleColor: .systemRed,
-                cardColor: UIColor.systemRed.withAlphaComponent(0.14),
-                trade: trade
-            )
-        case .ignore:
-            configureIgnoreAction()
-        }
-
-        configureDetails(for: trade)
-    }
-}
-
-// MARK: - Private
-private extension TradeTableViewCell {
-
-    func configureTradeAction(titleColor: UIColor, cardColor: UIColor, trade: TradeRecord) {
-        titleLabel.textColor = titleColor
-        cardView.backgroundColor = cardColor
-        priceLabel.isHidden = false
-        detailsContainer.isHidden = false
-        priceLabel.text = "Цена: \(trade.previousPrice.formatted) → \(trade.currentPrice.formatted)"
-    }
-
-    func configureIgnoreAction() {
-        titleLabel.textColor = .systemYellow
-        cardView.backgroundColor = UIColor.systemYellow.withAlphaComponent(0.18)
-        priceLabel.isHidden = true
-        detailsContainer.isHidden = true
-        priceLabel.text = nil
-        resultLabel.text = nil
-        balanceLabel.text = nil
-    }
-
-    func configureDetails(for trade: TradeRecord) {
-        guard let result = trade.tradeResult else {
-            detailsContainer.isHidden = true
-            return
-        }
-
-        detailsContainer.isHidden = false
-        resultLabel.text = "Результат: \(formattedResult(result))"
-        balanceLabel.text = "Баланс: \(trade.balanceAfter.formatted)"
-    }
-
-    func formattedResult(_ value: Double) -> String {
-        let sign = value >= 0 ? "+" : ""
-        return "\(sign)\(value.formatted)"
+        let incomeSign = result.income >= 0 ? "+" : ""
+        titleLabel.text = "\(result.botName) (\(result.pairCode)), day = \(result.day), income = \(incomeSign)\(result.income.formatted) \(result.quoteCurrency)"
+        startLabel.text = "Start: \(base)=\(result.startBalances[base, default: 0].formatted), \(quote)=\(result.startBalances[quote, default: 0].formatted)"
+        endLabel.text = "End: \(base)=\(result.endBalances[base, default: 0].formatted), \(quote)=\(result.endBalances[quote, default: 0].formatted)"
+        titleLabel.textColor = .white
+        cardView.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
     }
 
     func setupUI() {
@@ -101,28 +49,27 @@ private extension TradeTableViewCell {
         backgroundColor = .clear
         contentView.backgroundColor = .clear
 
-        [cardView, titleLabel, priceLabel, detailsContainer, resultLabel, balanceLabel].forEach {
+        [cardView, titleLabel, startLabel, endLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
         contentView.addSubview(cardView)
         cardView.addSubview(titleLabel)
-        cardView.addSubview(priceLabel)
-        cardView.addSubview(detailsContainer)
-        detailsContainer.addSubview(resultLabel)
-        detailsContainer.addSubview(balanceLabel)
+        cardView.addSubview(startLabel)
+        cardView.addSubview(endLabel)
 
         cardView.layer.cornerRadius = 14
         cardView.layer.borderWidth = 1
         cardView.layer.borderColor = UIColor.white.withAlphaComponent(0.08).cgColor
 
-        titleLabel.font = .systemFont(ofSize: 16, weight: .bold)
-        priceLabel.font = .systemFont(ofSize: 14, weight: .regular)
-        resultLabel.font = .systemFont(ofSize: 14, weight: .semibold)
-        balanceLabel.font = .systemFont(ofSize: 13, weight: .regular)
-        priceLabel.textColor = .white
-        resultLabel.textColor = .white
-        balanceLabel.textColor = UIColor.white.withAlphaComponent(0.78)
+        titleLabel.font = .systemFont(ofSize: 13, weight: .semibold)
+        startLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        endLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        titleLabel.numberOfLines = 0
+        startLabel.numberOfLines = 1
+        endLabel.numberOfLines = 1
+        startLabel.textColor = UIColor.white.withAlphaComponent(0.9)
+        endLabel.textColor = UIColor.white.withAlphaComponent(0.9)
 
         NSLayoutConstraint.activate([
             cardView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
@@ -134,23 +81,14 @@ private extension TradeTableViewCell {
             titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
 
-            priceLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 6),
-            priceLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
-            priceLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
+            startLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 6),
+            startLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
+            startLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
 
-            detailsContainer.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 8),
-            detailsContainer.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
-            detailsContainer.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
-            detailsContainer.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -10),
-
-            resultLabel.topAnchor.constraint(equalTo: detailsContainer.topAnchor),
-            resultLabel.leadingAnchor.constraint(equalTo: detailsContainer.leadingAnchor),
-            resultLabel.trailingAnchor.constraint(equalTo: detailsContainer.trailingAnchor),
-
-            balanceLabel.topAnchor.constraint(equalTo: resultLabel.bottomAnchor, constant: 4),
-            balanceLabel.leadingAnchor.constraint(equalTo: detailsContainer.leadingAnchor),
-            balanceLabel.trailingAnchor.constraint(equalTo: detailsContainer.trailingAnchor),
-            balanceLabel.bottomAnchor.constraint(equalTo: detailsContainer.bottomAnchor)
+            endLabel.topAnchor.constraint(equalTo: startLabel.bottomAnchor, constant: 4),
+            endLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
+            endLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
+            endLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -10)
         ])
     }
 }
