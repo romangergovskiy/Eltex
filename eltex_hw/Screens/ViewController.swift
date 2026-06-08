@@ -1,8 +1,16 @@
 import UIKit
 
 final class ViewController: UIViewController {
-
-    // MARK: - Properties
+    weak var coordinator: TradingBotRouting?
+    private let viewModel: TradingBotViewModel
+    private var state = TradingBotViewState(
+        pairText: "USD-BTC",
+        botsCountText: "Ботов: 0",
+        statusText: "",
+        dailyResults: [],
+        isFirstRun: true,
+        controlsEnabled: true
+    )
 
     private let headerImageView = UIImageView()
     private let containerView = UIView()
@@ -17,39 +25,60 @@ final class ViewController: UIViewController {
 
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
     private let emptyStateLabel = UILabel()
+    private let botsCounterLabel = UILabel()
 
-    private var isFirstRun = true
-    private var greetingText = ""
-    private var trades: [TradeRecord] = []
-    private lazy var tradingBot = TradingBot(trader: Trader(balance: 10000, currency: .usd))
+    private var isCompactLayout: Bool {
+        view.bounds.height <= 700
+    }
 
-    private let allAssets = PairAssetFactory.makeList(minCount: 140)
-    private let defaultFirstCode = "USD"
-    private let defaultSecondCode = "BTC"
-    private var firstAsset: PairAsset = PairAsset(code: "USD", category: .fiat)
-    private var secondAsset: PairAsset = PairAsset(code: "BTC", category: .crypto)
+    init(viewModel: TradingBotViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
 
-    // MARK: - Lifecycle
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupInitialPair()
         setupUI()
         setupNavigationBar()
         setupGestures()
-        updatePairText()
-        updateEmptyState()
+        bindViewModel()
+        viewModel.viewDidLoad()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let useLargeTitle = !isCompactLayout
+        navigationController?.navigationBar.prefersLargeTitles = useLargeTitle
+        navigationItem.largeTitleDisplayMode = useLargeTitle ? .always : .never
     }
 }
 
 private extension ViewController {
+    func bindViewModel() {
+        viewModel.onStateChange = { [weak self] newState in
+            guard let self else { return }
+            self.state = newState
+            self.render(state: newState)
+        }
+        viewModel.onError = { [weak self] message in
+            self?.showError(message)
+        }
+    }
 
-    // MARK: - Setup
-
-    func setupInitialPair() {
-        let fallback = allAssets.first ?? PairAsset(code: "USD", category: .fiat)
-        firstAsset = allAssets.first(where: { $0.code == defaultFirstCode }) ?? fallback
-        secondAsset = allAssets.first(where: { $0.code == defaultSecondCode }) ?? allAssets.first(where: { $0.code != firstAsset.code }) ?? fallback
+    func render(state: TradingBotViewState) {
+        pairValueLabel.text = state.pairText
+        botsCounterLabel.text = state.botsCountText
+        tableView.reloadData()
+        let shouldShowEmpty = state.isFirstRun && state.statusText.isEmpty && state.dailyResults.isEmpty
+        emptyStateLabel.isHidden = !shouldShowEmpty
+        tableView.isHidden = shouldShowEmpty
+        runButton.isEnabled = state.controlsEnabled
+        runButton.alpha = state.controlsEnabled ? 1.0 : 0.65
+        setControlsEnabled(state.controlsEnabled)
     }
 
     func setupUI() {
@@ -69,7 +98,7 @@ private extension ViewController {
     }
 
     func setupAutoresizingMasks() {
-        [headerImageView, containerView, filterStack, runButton, pairSelectionView, pairTitleLabel, pairValueLabel, pairHintLabel, pairChevronImageView, botSwitch, tableView, emptyStateLabel].forEach {
+        [headerImageView, containerView, filterStack, runButton, pairSelectionView, pairTitleLabel, pairValueLabel, pairHintLabel, pairChevronImageView, botSwitch, tableView, emptyStateLabel, botsCounterLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
     }
@@ -78,36 +107,61 @@ private extension ViewController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 20, weight: .semibold)
+        ]
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
+        ]
 
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.compactAppearance = appearance
         navigationController?.navigationBar.tintColor = .systemBlue
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "trash"),
+        navigationItem.prompt = nil
+        navigationItem.title = "Торговля"
+        let iconConfig = UIImage.SymbolConfiguration(pointSize: 17, weight: .semibold)
+
+        let resetButton = UIBarButtonItem(
+            image: UIImage(systemName: "trash", withConfiguration: iconConfig),
             style: .plain,
             target: self,
             action: #selector(resetTapped)
         )
 
+        let addBotButton = UIBarButtonItem(
+            image: UIImage(systemName: "plus.circle", withConfiguration: iconConfig),
+            style: .plain,
+            target: self,
+            action: #selector(addBotTapped)
+        )
+
         let randomButton = UIBarButtonItem(
-            image: UIImage(systemName: "shuffle"),
+            image: UIImage(systemName: "shuffle", withConfiguration: iconConfig),
             style: .plain,
             target: self,
             action: #selector(randomPairTapped)
         )
 
         let chartButton = UIBarButtonItem(
-            image: UIImage(systemName: "chart.bar.xaxis"),
+            image: UIImage(systemName: "chart.bar.xaxis", withConfiguration: iconConfig),
             style: .plain,
             target: self,
             action: #selector(openChartTapped)
         )
 
-        navigationItem.rightBarButtonItems = [chartButton, randomButton]
+        let walletButton = UIBarButtonItem(
+            image: UIImage(systemName: "wallet.bifold", withConfiguration: iconConfig),
+            style: .plain,
+            target: self,
+            action: #selector(openWalletTapped)
+        )
+
+        navigationItem.leftBarButtonItems = [resetButton, addBotButton]
+        navigationItem.rightBarButtonItems = [walletButton, chartButton, randomButton]
     }
 
     func setupGestures() {
@@ -143,6 +197,7 @@ private extension ViewController {
         filterStack.addArrangedSubview(UIView())
         filterStack.addArrangedSubview(botSwitch)
         botSwitch.onTintColor = .systemTeal
+        botSwitch.isOn = true
     }
 
     func setupRunButton() {
@@ -172,22 +227,28 @@ private extension ViewController {
 
         pairChevronImageView.tintColor = .white
 
+        botsCounterLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        botsCounterLabel.textColor = UIColor.white.withAlphaComponent(0.9)
+        botsCounterLabel.textAlignment = .right
+
         pairSelectionView.addSubview(pairTitleLabel)
         pairSelectionView.addSubview(pairValueLabel)
         pairSelectionView.addSubview(pairHintLabel)
         pairSelectionView.addSubview(pairChevronImageView)
+        pairSelectionView.addSubview(botsCounterLabel)
     }
 
     func setupTableView() {
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "StatusCell")
         tableView.register(
             TradeTableViewCell.self,
             forCellReuseIdentifier: TradeTableViewCell.reuseIdentifier
         )
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "GreetingCell")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.backgroundColor = .clear
+        tableView.sectionIndexColor = .white
         tableView.showsVerticalScrollIndicator = true
         tableView.sectionHeaderTopPadding = 8
     }
@@ -212,16 +273,21 @@ private extension ViewController {
     }
 
     func makeConstraints() {
+        let headerHeight: CGFloat = isCompactLayout ? 120 : 160
+        let containerHeight: CGFloat = isCompactLayout ? 236 : 260
+        let topSpacingAfterHeader: CGFloat = isCompactLayout ? 12 : 20
+        let topSpacingAfterContainer: CGFloat = isCompactLayout ? 12 : 20
+
         NSLayoutConstraint.activate([
             headerImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             headerImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             headerImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerImageView.heightAnchor.constraint(equalToConstant: 160),
+            headerImageView.heightAnchor.constraint(equalToConstant: headerHeight),
 
             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            containerView.topAnchor.constraint(equalTo: headerImageView.bottomAnchor, constant: 20),
-            containerView.heightAnchor.constraint(equalToConstant: 260),
+            containerView.topAnchor.constraint(equalTo: headerImageView.bottomAnchor, constant: topSpacingAfterHeader),
+            containerView.heightAnchor.constraint(equalToConstant: containerHeight),
 
             filterStack.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
             filterStack.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
@@ -250,12 +316,16 @@ private extension ViewController {
             pairHintLabel.leadingAnchor.constraint(equalTo: pairSelectionView.leadingAnchor, constant: 12),
             pairHintLabel.bottomAnchor.constraint(lessThanOrEqualTo: pairSelectionView.bottomAnchor, constant: -8),
 
+            botsCounterLabel.trailingAnchor.constraint(equalTo: pairChevronImageView.leadingAnchor, constant: -8),
+            botsCounterLabel.centerYAnchor.constraint(equalTo: pairTitleLabel.centerYAnchor),
+            botsCounterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: pairTitleLabel.trailingAnchor, constant: 6),
+
             pairChevronImageView.trailingAnchor.constraint(equalTo: pairSelectionView.trailingAnchor, constant: -12),
             pairChevronImageView.centerYAnchor.constraint(equalTo: pairSelectionView.centerYAnchor),
             pairChevronImageView.widthAnchor.constraint(equalToConstant: 14),
             pairChevronImageView.heightAnchor.constraint(equalToConstant: 20),
 
-            tableView.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: topSpacingAfterContainer),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -269,99 +339,75 @@ private extension ViewController {
 }
 
 private extension ViewController {
-
-    // MARK: - Actions
-
     @objc func runTapped() {
-        tradingBot.resetSession()
-        greetingText = "\(tradingBot.greeting())\nПара: \(firstAsset.code)-\(secondAsset.code)"
-        trades = tradingBot.generateHistory(count: 40)
-        isFirstRun = false
-
-        updateEmptyState()
-        tableView.reloadData()
+        viewModel.runTrading(isEnabled: botSwitch.isOn)
     }
 
     @objc func pairSelectionTapped() {
-        let compactSelector = CurrencyPairsViewController(
-            mode: .compact,
-            allAssets: allAssets,
-            firstAsset: firstAsset,
-            secondAsset: secondAsset,
-            selectedSide: .first
+        let input = viewModel.pairSelectionInput()
+        coordinator?.showCompactPairSelector(
+            delegate: self,
+            allAssets: input.allAssets,
+            firstAsset: input.first,
+            secondAsset: input.second
         )
-        compactSelector.delegate = self
-
-        let presentedNavigation = UINavigationController(rootViewController: compactSelector)
-        presentedNavigation.modalPresentationStyle = .pageSheet
-        if let sheet = presentedNavigation.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-        }
-        present(presentedNavigation, animated: true)
     }
 
     @objc func resetTapped() {
-        setupInitialPair()
-        updatePairText()
-        resetTradingState()
+        viewModel.reset()
     }
 
     @objc func randomPairTapped() {
-        guard allAssets.count > 1 else { return }
-        let first = allAssets.randomElement() ?? allAssets[0]
-        let others = allAssets.filter { $0.code != first.code }
-        let second = others.randomElement() ?? first
-        applyPairChange(first: first, second: second)
+        viewModel.randomPair()
     }
 
     @objc func openChartTapped() {
-        let chartsViewController = ChartsViewController()
-        chartsViewController.title = "График"
-        navigationController?.pushViewController(chartsViewController, animated: true)
+        coordinator?.showCharts()
+    }
+
+    @objc func addBotTapped() {
+        let alert = UIAlertController(
+            title: "Новый бот",
+            message: "Введите уникальное имя. Бот будет привязан к текущей паре \(state.pairText).",
+            preferredStyle: .alert
+        )
+        alert.addTextField {
+            $0.placeholder = "Например: BotBtcMaster"
+            $0.autocapitalizationType = .none
+            $0.clearButtonMode = .whileEditing
+        }
+
+        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Добавить", style: .default) { [weak self, weak alert] _ in
+            guard let self else { return }
+            let input = alert?.textFields?.first?.text ?? ""
+            self.viewModel.addBot(name: input)
+        })
+        present(alert, animated: true)
+    }
+
+    @objc func openWalletTapped() {
+        coordinator?.showWallet()
     }
 
     @objc func handleSwipeUp() {
         openChartTapped()
     }
 
-    func applyPairChange(first: PairAsset, second: PairAsset) {
-        guard first.code != second.code else { return }
-
-        let didChange = first.code != firstAsset.code || second.code != secondAsset.code
-        firstAsset = first
-        secondAsset = second
-        updatePairText()
-
-        if didChange {
-            resetTradingState()
-        }
+    func showError(_ message: String) {
+        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 
-    func updatePairText() {
-        pairValueLabel.text = "\(firstAsset.code)-\(secondAsset.code)"
-    }
-
-    func resetTradingState() {
-        isFirstRun = true
-        greetingText = ""
-        trades = []
-        botSwitch.setOn(false, animated: true)
-        updateEmptyState()
-        tableView.reloadData()
-    }
-
-    func updateEmptyState() {
-        let shouldShowEmpty = isFirstRun || trades.isEmpty
-        emptyStateLabel.isHidden = !shouldShowEmpty
-        tableView.isHidden = shouldShowEmpty
+    func setControlsEnabled(_ enabled: Bool) {
+        navigationItem.leftBarButtonItems?.forEach { $0.isEnabled = enabled }
+        navigationItem.rightBarButtonItems?.forEach { $0.isEnabled = enabled }
+        pairSelectionView.isUserInteractionEnabled = enabled
     }
 }
 
 extension ViewController: UITableViewDataSource {
-    // MARK: - UITableViewDataSource
-
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -369,9 +415,9 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return greetingText.isEmpty ? 0 : 1
+            return state.statusText.isEmpty ? 0 : 1
         case 1:
-            return trades.isEmpty ? 0 : trades.count
+            return state.dailyResults.isEmpty ? 0 : state.dailyResults.count
         default:
             return 0
         }
@@ -380,9 +426,9 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return greetingText.isEmpty ? nil : "Приветствие"
+            return state.statusText.isEmpty ? nil : "Статус"
         case 1:
-            return trades.isEmpty ? nil : "История сделок"
+            return state.dailyResults.isEmpty ? nil : "Результаты по дням и ботам"
         default:
             return nil
         }
@@ -390,8 +436,8 @@ extension ViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "GreetingCell", for: indexPath)
-            cell.textLabel?.text = greetingText
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StatusCell", for: indexPath)
+            cell.textLabel?.text = state.statusText
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.font = .systemFont(ofSize: 16)
             cell.textLabel?.textAlignment = .center
@@ -407,35 +453,34 @@ extension ViewController: UITableViewDataSource {
         ) as? TradeTableViewCell else {
             return UITableViewCell()
         }
-
-        cell.configure(with: trades[indexPath.row])
+        cell.configure(with: state.dailyResults[indexPath.row])
         return cell
     }
 }
 
 extension ViewController: UITableViewDelegate {
-    // MARK: - UITableViewDelegate
-
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard indexPath.section == 1 else { return UITableView.automaticDimension }
-        let trade = trades[indexPath.row]
-        return trade.action == .ignore ? 76 : 122
+        UITableView.automaticDimension
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        indexPath.section == 0 ? 44 : 100
+        indexPath.section == 0 ? 50 : 110
+    }
+
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        guard let header = view as? UITableViewHeaderFooterView else { return }
+        header.textLabel?.textColor = UIColor.white.withAlphaComponent(0.9)
+        header.contentView.backgroundColor = .clear
     }
 }
 
 extension ViewController: CurrencyPairsViewControllerDelegate {
-    // MARK: - CurrencyPairsViewControllerDelegate
-
     func currencyPairsViewController(
         _ controller: CurrencyPairsViewController,
         didUpdateFirstAsset firstAsset: PairAsset,
         secondAsset: PairAsset
     ) {
-        applyPairChange(first: firstAsset, second: secondAsset)
+        viewModel.applyPair(first: firstAsset, second: secondAsset)
     }
 
     func currencyPairsViewControllerDidRequestFullList(
@@ -446,16 +491,14 @@ extension ViewController: CurrencyPairsViewControllerDelegate {
     ) {
         dismiss(animated: true) { [weak self] in
             guard let self else { return }
-            let fullSelector = CurrencyPairsViewController(
-                mode: .full,
-                allAssets: self.allAssets,
+            let allAssets = self.viewModel.pairSelectionInput().allAssets
+            self.coordinator?.showFullPairSelector(
+                delegate: self,
+                allAssets: allAssets,
                 firstAsset: firstAsset,
                 secondAsset: secondAsset,
-                selectedSide: selectedSide,
-                startsWithFavoritesOnly: true
+                selectedSide: selectedSide
             )
-            fullSelector.delegate = self
-            self.navigationController?.pushViewController(fullSelector, animated: true)
         }
     }
 }
