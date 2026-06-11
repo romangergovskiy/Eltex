@@ -35,6 +35,7 @@ final class CurrencyPairsViewController: UIViewController {
 
     private let mode: Mode
     private let allAssets: [PairAsset]
+    private let apiAssets: [PairAsset]
     private let favoritesStorageKey = "favoritePairAssets"
     private let startsWithFavoritesOnly: Bool
 
@@ -42,6 +43,7 @@ final class CurrencyPairsViewController: UIViewController {
     private var selectedFilter: PairAssetFilter = .all
     private var favoriteCodes: Set<String> = []
     private var isFavoriteFilterEnabled = false
+    private var isAPIOnlyModeEnabled = false
 
     private var firstAsset: PairAsset
     private var secondAsset: PairAsset
@@ -69,6 +71,7 @@ final class CurrencyPairsViewController: UIViewController {
     // MARK: UI (Common)
 
     private let favoriteFilterView = FavoriteFilterView()
+    private let dataModeSegmentControl = UISegmentedControl(items: ["Все", "Только API"])
     private let filterSegmentControl = UISegmentedControl(items: ["Все", "Фиат", "Крипта"])
     private let emptyStateLabel = UILabel()
     private lazy var collectionView: UICollectionView = {
@@ -101,10 +104,12 @@ final class CurrencyPairsViewController: UIViewController {
         firstAsset: PairAsset,
         secondAsset: PairAsset,
         selectedSide: SelectionSide = .first,
-        startsWithFavoritesOnly: Bool = false
+        startsWithFavoritesOnly: Bool = false,
+        apiAssets: [PairAsset] = []
     ) {
         self.mode = mode
         self.allAssets = allAssets
+        self.apiAssets = apiAssets
         self.firstAsset = firstAsset
         self.secondAsset = secondAsset
         self.selectedSide = selectedSide
@@ -161,6 +166,7 @@ private extension CurrencyPairsViewController {
         setupCompactUI()
         setupFullHeaderUI()
         setupFavoriteFilterView()
+        setupDataModeSegmentControl()
         setupFilterControl()
         setupCollectionView()
         setupEmptyStateLabel()
@@ -369,6 +375,17 @@ private extension CurrencyPairsViewController {
         filterSegmentControl.addTarget(self, action: #selector(filterChanged), for: .valueChanged)
     }
 
+    func setupDataModeSegmentControl() {
+        dataModeSegmentControl.translatesAutoresizingMaskIntoConstraints = false
+        dataModeSegmentControl.selectedSegmentIndex = 0
+        dataModeSegmentControl.selectedSegmentTintColor = .systemBlue
+        dataModeSegmentControl.backgroundColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
+        dataModeSegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
+        dataModeSegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
+        dataModeSegmentControl.addTarget(self, action: #selector(dataModeChanged), for: .valueChanged)
+        dataModeSegmentControl.isEnabled = !apiAssets.isEmpty
+    }
+
     func setupCollectionView() {
         collectionView.layer.cornerRadius = 16
         collectionView.backgroundColor = UIColor(red: 0.1, green: 0.14, blue: 0.24, alpha: 1)
@@ -400,6 +417,7 @@ private extension CurrencyPairsViewController {
         view.addSubview(allButton)
         view.addSubview(fullHeaderView)
         view.addSubview(favoriteFilterView)
+        view.addSubview(dataModeSegmentControl)
         view.addSubview(filterSegmentControl)
         view.addSubview(collectionView)
         view.addSubview(emptyStateLabel)
@@ -440,6 +458,10 @@ private extension CurrencyPairsViewController {
             favoriteFilterView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             favoriteFilterView.heightAnchor.constraint(equalToConstant: 44),
 
+            dataModeSegmentControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            dataModeSegmentControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            dataModeSegmentControl.heightAnchor.constraint(equalToConstant: 32),
+
             filterSegmentControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             filterSegmentControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             filterSegmentControl.heightAnchor.constraint(equalToConstant: 32),
@@ -456,11 +478,13 @@ private extension CurrencyPairsViewController {
 
         if mode == .compact {
             favoriteFilterView.topAnchor.constraint(equalTo: compactPairContainerView.bottomAnchor, constant: 10).isActive = true
-            filterSegmentControl.topAnchor.constraint(equalTo: favoriteFilterView.bottomAnchor, constant: 10).isActive = true
+            dataModeSegmentControl.topAnchor.constraint(equalTo: favoriteFilterView.bottomAnchor, constant: 10).isActive = true
+            filterSegmentControl.topAnchor.constraint(equalTo: dataModeSegmentControl.bottomAnchor, constant: 10).isActive = true
             collectionView.topAnchor.constraint(equalTo: compactHintLabel.bottomAnchor, constant: 10).isActive = true
         } else {
             favoriteFilterView.topAnchor.constraint(equalTo: fullHeaderView.bottomAnchor, constant: 10).isActive = true
-            filterSegmentControl.topAnchor.constraint(equalTo: favoriteFilterView.bottomAnchor, constant: 10).isActive = true
+            dataModeSegmentControl.topAnchor.constraint(equalTo: favoriteFilterView.bottomAnchor, constant: 10).isActive = true
+            filterSegmentControl.topAnchor.constraint(equalTo: dataModeSegmentControl.bottomAnchor, constant: 10).isActive = true
             collectionView.topAnchor.constraint(equalTo: filterSegmentControl.bottomAnchor, constant: 10).isActive = true
         }
     }
@@ -473,6 +497,7 @@ private extension CurrencyPairsViewController {
 
         fullHeaderView.isHidden = isCompact
         favoriteFilterView.isHidden = isCompact
+        dataModeSegmentControl.isHidden = isCompact
         filterSegmentControl.isHidden = isCompact
     }
 }
@@ -513,6 +538,11 @@ private extension CurrencyPairsViewController {
 
     @objc func filterChanged() {
         selectedFilter = PairAssetFilter(rawValue: filterSegmentControl.selectedSegmentIndex) ?? .all
+        applySelectedFiltersAndReload()
+    }
+
+    @objc func dataModeChanged() {
+        isAPIOnlyModeEnabled = dataModeSegmentControl.selectedSegmentIndex == 1
         applySelectedFiltersAndReload()
     }
 
@@ -559,14 +589,15 @@ private extension CurrencyPairsViewController {
     }
 
     func fullSource() -> [PairAsset] {
+        let sourceAssets = isAPIOnlyModeEnabled ? apiAssets : allAssets
         let typeFiltered: [PairAsset]
         switch selectedFilter {
         case .all:
-            typeFiltered = allAssets
+            typeFiltered = sourceAssets
         case .fiat:
-            typeFiltered = allAssets.filter { $0.category == .fiat }
+            typeFiltered = sourceAssets.filter { $0.category == .fiat }
         case .crypto:
-            typeFiltered = allAssets.filter { $0.category == .crypto }
+            typeFiltered = sourceAssets.filter { $0.category == .crypto }
         }
 
         if isFavoriteFilterEnabled {

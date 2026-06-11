@@ -1,112 +1,274 @@
 import Foundation
+import OSLog
 
-// MARK: - Trading
+// MARK: - Trading Config
 
-enum Currency {
-    case usd
-
-    var code: String { "USD" }
-}
-
-enum TradeAction {
-    case buy
-    case sell
-    case ignore
-
-    var title: String {
-        switch self {
-        case .buy: return "Покупка"
-        case .sell: return "Продажа"
-        case .ignore: return "Игнорирование"
+enum AppConfig {
+    private static let networkModeKey = "app.network.combine.enabled"
+    static var isNetworkWithCombine: Bool {
+        get {
+            if UserDefaults.standard.object(forKey: networkModeKey) == nil {
+                return true
+            }
+            return UserDefaults.standard.bool(forKey: networkModeKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: networkModeKey)
         }
     }
+    static let minOperationsPerDay = 200
+    static let maxOperationsPerDay = 500
+    static let numberOfDays = 20
+    static let maxConcurrentOperations = 6
+    static let autoCreditAmount = 1000.0
+    static let minTradeAmount = 5.0
+    static let maxTradeAmount = 40.0
+    static let defaultBotsPerPair = 5
+
+    static let initialWalletBalances: [String: Double] = [
+        "USD": 10_000,
+        "RUB": 500_000,
+        "BTC": 1_500,
+        "ETH": 2_500
+    ]
+
+    static var tradingConfig: TradingConfig {
+        TradingConfig(
+            minOperationsPerDay: minOperationsPerDay,
+            maxOperationsPerDay: maxOperationsPerDay,
+            numberOfDays: numberOfDays,
+            maxConcurrentOperations: maxConcurrentOperations
+        )
+    }
 }
 
-struct Trader {
-    private(set) var balance: Double
-    let currency: Currency
-
-    init(balance: Double, currency: Currency) {
-        self.balance = balance
-        self.currency = currency
-    }
-
-    mutating func apply(_ delta: Double) {
-        balance += delta
-    }
+struct TradingConfig {
+    let minOperationsPerDay: Int
+    let maxOperationsPerDay: Int
+    let numberOfDays: Int
+    let maxConcurrentOperations: Int
 }
 
-struct TradeRecord {
-    let index: Int
-    let action: TradeAction
-    let previousPrice: Double
-    let currentPrice: Double
-    let tradeResult: Double?
-    let balanceAfter: Double
+struct WalletSnapshot {
+    let balances: [String: Double]
+    let credit: [String: Double]
+}
+
+struct WalletExchangeResult {
+    let spent: Double
+    let received: Double
+}
+
+struct BotDayResult {
+    let botName: String
+    let pairCode: String
+    let quoteCurrency: String
+    let day: Int
+    let startBalances: [String: Double]
+    let endBalances: [String: Double]
+    let income: Double
+}
+
+struct BotSetup {
+    let name: String
+    let baseCurrency: String
+    let quoteCurrency: String
+    let baseCategory: PairAssetCategory
+    let quoteCategory: PairAssetCategory
+
+    var pairCode: String { "\(baseCurrency)-\(quoteCurrency)" }
+}
+
+final class Wallet {
+    private let queue = DispatchQueue(label: "wallet.sync.queue")
+    private var balances: [String: Double]
+    private var credit: [String: Double]
+    private let autoCreditAmount: Double
+
+    init(initialBalances: [String: Double], autoCreditAmount: Double) {
+        self.balances = initialBalances
+        self.credit = [:]
+        self.autoCreditAmount = autoCreditAmount
+    }
+
+    func reset(to initialBalances: [String: Double]) {
+        queue.sync {
+            balances = initialBalances
+            credit = [:]
+        }
+    }
+
+    func fullSnapshot() -> WalletSnapshot {
+        queue.sync {
+            WalletSnapshot(balances: balances, credit: credit)
+        }
+    }
+
+    func pairBalances(base: String, quote: String) -> [String: Double] {
+        queue.sync {
+            [
+                base: balances[base, default: 0],
+                quote: balances[quote, default: 0]
+            ]
+        }
+    }
+
+    @discardableResult
+    func exchange(from sourceCurrency: String, to targetCurrency: String, amount: Double, rate: Double) -> WalletExchangeResult {
+        guard amount > 0, rate > 0 else {
+            return WalletExchangeResult(spent: 0, received: 0)
+        }
+
+        return queue.sync {
+            replenishIfNeeded(currency: sourceCurrency)
+
+            let available = balances[sourceCurrency, default: 0]
+            let spent = min(available, amount)
+            guard spent > 0 else {
+                return WalletExchangeResult(spent: 0, received: 0)
+            }
+
+            balances[sourceCurrency, default: 0] -= spent
+            let received = spent * rate
+            balances[targetCurrency, default: 0] += received
+
+            replenishIfNeeded(currency: sourceCurrency)
+            return WalletExchangeResult(spent: spent, received: received)
+        }
+    }
+
+    private func replenishIfNeeded(currency: String) {
+        guard balances[currency, default: 0] <= 0 else { return }
+        balances[currency, default: 0] += autoCreditAmount
+        credit[currency, default: 0] += autoCreditAmount
+    }
 }
 
 final class TradingBot {
-    private let initialTrader: Trader
-    private var trader: Trader
-    private var currentPrice: Double
+    let setup: BotSetup
+    private let wallet: Wallet
 
-    init(trader: Trader) {
-        self.initialTrader = trader
-        self.trader = trader
-        self.currentPrice = Double.random(in: 2000...8000)
+    init(setup: BotSetup, wallet: Wallet) {
+        self.setup = setup
+        self.wallet = wallet
     }
 
-    func resetSession() {
-        trader = initialTrader
-        currentPrice = Double.random(in: 2000...8000)
-    }
+    func runSingleOperation() {
+        let sellBase = Bool.random()
+        let price = generatePrice()
 
-    func greeting() -> String {
-        "Торговый бот запущен. Стартовый баланс: \(trader.balance.formatted) \(trader.currency.code)"
-    }
-
-    func generateHistory(count: Int = 40) -> [TradeRecord] {
-        var records: [TradeRecord] = []
-        records.reserveCapacity(count)
-
-        for index in 1...count {
-            guard trader.balance > 0 else { break }
-
-            let previous = currentPrice
-            let priceChange = Double.random(in: -500...500)
-            currentPrice += priceChange
-
-            let action = makeDecision(priceChange: priceChange)
-
-            let result: Double?
-            switch action {
-            case .buy:
-                result = priceChange
-                trader.apply(priceChange)
-            case .sell:
-                result = priceChange
-                trader.apply(priceChange)
-            case .ignore:
-                result = nil
-            }
-
-            let record = TradeRecord(
-                index: index,
-                action: action,
-                previousPrice: previous,
-                currentPrice: currentPrice,
-                tradeResult: result,
-                balanceAfter: trader.balance
+        if sellBase {
+            let sellAmount = Double.random(in: AppConfig.minTradeAmount...AppConfig.maxTradeAmount)
+            _ = wallet.exchange(
+                from: setup.baseCurrency,
+                to: setup.quoteCurrency,
+                amount: sellAmount,
+                rate: price
             )
-            records.append(record)
+            return
         }
 
-        return records
+        let spendQuote = Double.random(in: AppConfig.minTradeAmount...AppConfig.maxTradeAmount)
+        _ = wallet.exchange(
+            from: setup.quoteCurrency,
+            to: setup.baseCurrency,
+            amount: spendQuote,
+            rate: 1 / price
+        )
     }
 
-    private func makeDecision(priceChange: Double) -> TradeAction {
-        guard abs(priceChange) > 100 else { return .ignore }
-        return priceChange < -100 ? .buy : .sell
+    private func generatePrice() -> Double {
+        Double.random(in: 0.5...1.6)
+    }
+}
+
+final class TradingEngine {
+    private let config: TradingConfig
+    private let operationQueue: OperationQueue
+
+    init(config: TradingConfig) {
+        self.config = config
+        self.operationQueue = OperationQueue()
+        operationQueue.name = "trading.operations.queue"
+        operationQueue.qualityOfService = .userInitiated
+        operationQueue.maxConcurrentOperationCount = max(1, config.maxConcurrentOperations)
+    }
+
+    func run(
+        bots: [TradingBot],
+        wallet: Wallet,
+        progress: ((Int, Int) -> Void)? = nil,
+        completion: @escaping ([BotDayResult]) -> Void
+    ) {
+        guard !bots.isEmpty else {
+            completion([])
+            return
+        }
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self else { return }
+            var results: [BotDayResult] = []
+            results.reserveCapacity(self.config.numberOfDays * bots.count)
+
+            for day in 1...self.config.numberOfDays {
+                for bot in bots {
+                    let operationCount = Int.random(
+                        in: self.config.minOperationsPerDay...self.config.maxOperationsPerDay
+                    )
+                    let startBalances = wallet.pairBalances(
+                        base: bot.setup.baseCurrency,
+                        quote: bot.setup.quoteCurrency
+                    )
+
+                    let operationsGroup = DispatchGroup()
+
+                    for _ in 0..<operationCount {
+                        operationsGroup.enter()
+                        self.operationQueue.addOperation {
+                            autoreleasepool {
+                                bot.runSingleOperation()
+                            }
+                            operationsGroup.leave()
+                        }
+                    }
+
+                    operationsGroup.wait()
+
+                    let endBalances = wallet.pairBalances(
+                        base: bot.setup.baseCurrency,
+                        quote: bot.setup.quoteCurrency
+                    )
+                    let quoteCode = bot.setup.quoteCurrency
+                    let income = endBalances[quoteCode, default: 0] - startBalances[quoteCode, default: 0]
+
+                    results.append(
+                        BotDayResult(
+                            botName: bot.setup.name,
+                            pairCode: bot.setup.pairCode,
+                            quoteCurrency: bot.setup.quoteCurrency,
+                            day: day,
+                            startBalances: startBalances,
+                            endBalances: endBalances,
+                            income: income
+                        )
+                    )
+                }
+
+                DispatchQueue.main.async {
+                    progress?(day, self.config.numberOfDays)
+                }
+            }
+
+            let sorted = results.sorted {
+                if $0.day == $1.day {
+                    return $0.botName < $1.botName
+                }
+                return $0.day < $1.day
+            }
+            DispatchQueue.main.async {
+                completion(sorted)
+            }
+        }
     }
 }
 
@@ -172,4 +334,14 @@ enum PairAssetFactory {
             }
         )
     }
+}
+
+// MARK: - Logging
+
+enum AppLogger {
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "com.roma.eltex-hw-10"
+    static let auth = Logger(subsystem: subsystem, category: "auth")
+    static let p2p = Logger(subsystem: subsystem, category: "p2p")
+    static let network = Logger(subsystem: subsystem, category: "network")
+    static let common = Logger(subsystem: subsystem, category: "common")
 }
