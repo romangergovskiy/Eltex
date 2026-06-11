@@ -14,6 +14,8 @@ final class SettingsViewController: UIViewController {
     private let signOutButton = UIButton(type: .system)
     private let rowContainer = UIView()
     private let networkRowContainer = UIView()
+    private let screenColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
+    private let cardColor = UIColor(red: 0.13, green: 0.18, blue: 0.29, alpha: 1)
 
     init(authManager: AuthSessionManager) {
         self.authManager = authManager
@@ -31,6 +33,11 @@ final class SettingsViewController: UIViewController {
         setupUI()
         updateState()
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
+    }
 }
 
 private extension SettingsViewController {
@@ -38,29 +45,33 @@ private extension SettingsViewController {
     // MARK: - Setup
 
     func setupUI() {
-        view.backgroundColor = UIColor.systemGroupedBackground
+        view.backgroundColor = screenColor
 
         [rowContainer, autoLoginLabel, autoLoginSwitch, networkRowContainer, networkModeLabel, networkModeControl, signOutButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        rowContainer.backgroundColor = .secondarySystemGroupedBackground
+        rowContainer.backgroundColor = cardColor
         rowContainer.layer.cornerRadius = 12
-        networkRowContainer.backgroundColor = .secondarySystemGroupedBackground
+        networkRowContainer.backgroundColor = cardColor
         networkRowContainer.layer.cornerRadius = 12
 
         autoLoginLabel.text = "Автовход"
         autoLoginLabel.font = .systemFont(ofSize: 17, weight: .regular)
-        autoLoginLabel.textColor = .label
+        autoLoginLabel.textColor = .white
 
-        autoLoginSwitch.onTintColor = .systemBlue
+        autoLoginSwitch.onTintColor = .systemTeal
         autoLoginSwitch.addTarget(self, action: #selector(autoLoginChanged), for: .valueChanged)
 
         networkModeLabel.text = "Режим сети"
         networkModeLabel.font = .systemFont(ofSize: 17, weight: .regular)
-        networkModeLabel.textColor = .label
+        networkModeLabel.textColor = .white
 
         networkModeControl.selectedSegmentIndex = AppConfig.isNetworkWithCombine ? 1 : 0
+        networkModeControl.selectedSegmentTintColor = .systemBlue
+        networkModeControl.backgroundColor = cardColor
+        networkModeControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
+        networkModeControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
         networkModeControl.addTarget(self, action: #selector(networkModeChanged), for: .valueChanged)
 
         signOutButton.setTitle("Выйти", for: .normal)
@@ -110,6 +121,25 @@ private extension SettingsViewController {
             signOutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             signOutButton.heightAnchor.constraint(equalToConstant: 50)
         ])
+    }
+
+    func setupNavigationBar() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = screenColor
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 20, weight: .semibold)
+        ]
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
+        ]
+
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.tintColor = .systemBlue
     }
 
     func updateState() {

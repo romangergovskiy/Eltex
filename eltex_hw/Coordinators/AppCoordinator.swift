@@ -61,6 +61,15 @@ final class AppCoordinator: Coordinator {
         let p2pCoordinator = P2PCoordinator(navigationController: p2pNavigationController, wallet: sharedWallet)
         p2pCoordinator.start()
 
+        let optimizationViewController = UIHostingController(rootView: OptimizationCurrenciesView())
+        optimizationViewController.title = "Валюты"
+        let optimizationNavigationController = UINavigationController(rootViewController: optimizationViewController)
+        optimizationNavigationController.tabBarItem = UITabBarItem(
+            title: "Валюты",
+            image: UIImage(systemName: "speedometer"),
+            tag: 3
+        )
+
         let settingsViewController = SettingsViewController(authManager: authManager)
         settingsViewController.title = "Настройки"
         settingsViewController.onSignOutConfirmed = { [weak self] in
@@ -70,13 +79,14 @@ final class AppCoordinator: Coordinator {
         settingsNavigationController.tabBarItem = UITabBarItem(
             title: "Настройки",
             image: UIImage(systemName: "gearshape"),
-            tag: 3
+            tag: 4
         )
 
         tabBarController.viewControllers = [
             chartsNavigationController,
             tradeNavigationController,
             p2pNavigationController,
+            optimizationNavigationController,
             settingsNavigationController
         ]
 
