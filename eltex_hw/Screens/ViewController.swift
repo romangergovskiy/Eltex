@@ -160,8 +160,15 @@ private extension ViewController {
             action: #selector(openWalletTapped)
         )
 
+        let heatmapButton = UIBarButtonItem(
+            image: UIImage(systemName: "square.grid.3x3.fill", withConfiguration: iconConfig),
+            style: .plain,
+            target: self,
+            action: #selector(openHeatmapTapped)
+        )
+
         navigationItem.leftBarButtonItems = [resetButton, addBotButton]
-        navigationItem.rightBarButtonItems = [walletButton, chartButton, randomButton]
+        navigationItem.rightBarButtonItems = [walletButton, heatmapButton, chartButton, randomButton]
     }
 
     func setupGestures() {
@@ -388,6 +395,10 @@ private extension ViewController {
 
     @objc func openWalletTapped() {
         coordinator?.showWallet()
+    }
+
+    @objc func openHeatmapTapped() {
+        coordinator?.showHeatmap()
     }
 
     @objc func handleSwipeUp() {

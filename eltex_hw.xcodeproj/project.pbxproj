@@ -6,6 +6,16 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		EE10000A2F90000000FD1E77 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD0732692F8657DA00FD1E77 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD0732702F8657DA00FD1E77;
+			remoteInfo = eltex_hw;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		DD0732712F8657DA00FD1E77 /* eltex_hw.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eltex_hw.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE1000012F90000000FD1E77 /* eltex_hwTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = eltex_hwTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -193,16 +203,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXContainerItemProxy section */
-		EE10000A2F90000000FD1E77 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DD0732692F8657DA00FD1E77 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DD0732702F8657DA00FD1E77;
-			remoteInfo = eltex_hw;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXTargetDependency section */
 		EE10000B2F90000000FD1E77 /* PBXTargetDependency */ = {

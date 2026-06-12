@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 final class AppCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
@@ -85,10 +86,16 @@ final class AppCoordinator: Coordinator {
 
     private func showAuthScreen() {
         let authViewController = AuthViewController(authManager: authManager)
+        let authNavigationController = UINavigationController(rootViewController: authViewController)
         authViewController.onAuthorized = { [weak self] in
             self?.showMainApplication()
         }
-        transition(to: authViewController)
+        authViewController.onHelpRequested = { [weak authNavigationController] in
+            let feedbackController = UIHostingController(rootView: FeedbackFormView())
+            feedbackController.navigationItem.largeTitleDisplayMode = .never
+            authNavigationController?.pushViewController(feedbackController, animated: true)
+        }
+        transition(to: authNavigationController)
     }
 
     private func transition(to controller: UIViewController) {

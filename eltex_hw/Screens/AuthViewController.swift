@@ -26,6 +26,7 @@ final class AuthViewController: UIViewController {
     // MARK: - Properties
 
     var onAuthorized: (() -> Void)?
+    var onHelpRequested: (() -> Void)?
 
     private let authManager: AuthSessionManager
     private let titleLabel = UILabel()
@@ -33,6 +34,7 @@ final class AuthViewController: UIViewController {
     private let loginField = UITextField()
     private let passwordField = UITextField()
     private let actionButton = UIButton(type: .system)
+    private let helpButton = UIButton(type: .system)
     private let modeControl = UISegmentedControl(items: ["Вход", "Регистрация"])
     private let stackView = UIStackView()
     private let viewModel = AuthFormViewModel()
@@ -56,6 +58,16 @@ final class AuthViewController: UIViewController {
         bindUI()
         fillLoginIfPossible()
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
 }
 
 private extension AuthViewController {
@@ -65,7 +77,7 @@ private extension AuthViewController {
     func setupUI() {
         view.backgroundColor = UIColor(red: 0.06, green: 0.09, blue: 0.16, alpha: 1)
 
-        [titleLabel, subtitleLabel, loginField, passwordField, actionButton, modeControl, stackView].forEach {
+        [titleLabel, subtitleLabel, loginField, passwordField, actionButton, helpButton, modeControl, stackView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -112,6 +124,11 @@ private extension AuthViewController {
         actionButton.alpha = 0.6
         actionButton.addTarget(self, action: #selector(actionTapped), for: .touchUpInside)
 
+        helpButton.setTitle("не получается войти?", for: .normal)
+        helpButton.setTitleColor(.systemTeal, for: .normal)
+        helpButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+        helpButton.addTarget(self, action: #selector(helpTapped), for: .touchUpInside)
+
         modeControl.selectedSegmentIndex = AuthMode.signIn.rawValue
         modeControl.backgroundColor = UIColor.white.withAlphaComponent(0.9)
         modeControl.selectedSegmentTintColor = UIColor(red: 0.19, green: 0.48, blue: 0.96, alpha: 1)
@@ -123,11 +140,13 @@ private extension AuthViewController {
         stackView.addArrangedSubview(loginField)
         stackView.addArrangedSubview(passwordField)
         stackView.addArrangedSubview(actionButton)
+        stackView.addArrangedSubview(helpButton)
         stackView.addArrangedSubview(modeControl)
 
         loginField.heightAnchor.constraint(equalToConstant: 50).isActive = true
         passwordField.heightAnchor.constraint(equalToConstant: 50).isActive = true
         actionButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        helpButton.heightAnchor.constraint(equalToConstant: 24).isActive = true
         modeControl.heightAnchor.constraint(equalToConstant: 36).isActive = true
 
         view.addSubview(titleLabel)
@@ -215,6 +234,10 @@ private extension AuthViewController {
                 AppLogger.auth.error("Auth action failed. mode=signUp")
             }
         }
+    }
+
+    @objc func helpTapped() {
+        onHelpRequested?()
     }
 }
 

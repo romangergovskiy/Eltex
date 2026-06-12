@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 protocol TradingBotRouting: AnyObject {
     func showCompactPairSelector(
@@ -16,6 +17,7 @@ protocol TradingBotRouting: AnyObject {
     )
     func showCharts()
     func showWallet()
+    func showHeatmap()
 }
 
 final class TradingCoordinator: Coordinator, TradingBotRouting {
@@ -94,5 +96,12 @@ final class TradingCoordinator: Coordinator, TradingBotRouting {
         let navController = UINavigationController(rootViewController: walletController)
         navController.modalPresentationStyle = .pageSheet
         navigationController.topViewController?.present(navController, animated: true)
+    }
+
+    func showHeatmap() {
+        let heatmapController = UIHostingController(rootView: HeatmapView())
+        heatmapController.title = "Heatmap"
+        heatmapController.navigationItem.largeTitleDisplayMode = .never
+        navigationController.pushViewController(heatmapController, animated: true)
     }
 }
