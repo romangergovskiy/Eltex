@@ -1,6 +1,4 @@
 import SwiftUI
-import UIKit
-import Combine
 
 // MARK: - Palette
 
@@ -12,215 +10,142 @@ private enum OptimizationPalette {
     static let textSecondary = Color.white.opacity(0.7)
 }
 
-// MARK: - Model
+// MARK: - Layout
 
-struct OptimizationCurrencyPair: Identifiable {
-    let id: UUID
-    let name: String
-    var value: Double
-    var previousValue: Double
-    var history: [Double]
-    var isRisky: Bool
-    var priceText: String
-
-    var isGrowing: Bool {
-        value >= previousValue
-    }
-
-    var changePercent: Double {
-        guard previousValue != 0 else { return 0 }
-        return (value - previousValue) / previousValue * 100
-    }
-}
-
-// MARK: - Store
-
-@MainActor
-final class OptimizationCurrencyPairsStore: ObservableObject {
-    static let pairsCount = 500
-    private static let maxHistoryCount = 240
-    private static let latestPairsCount = 12
-
-    @Published private(set) var pairs: [OptimizationCurrencyPair] = []
-    @Published private(set) var lastUpdatedPairs: [OptimizationCurrencyPair] = []
-    @Published private(set) var updateCycle = 0
-
-    private var timer: Timer?
-
-    init() {
-        pairs = Self.makePairs()
-        lastUpdatedPairs = Array(pairs.prefix(Self.latestPairsCount))
-        startUpdating()
-    }
-
-    deinit {
-        timer?.invalidate()
-    }
-
-    private func startUpdating() {
-        timer = Timer.scheduledTimer(
-            withTimeInterval: 2,
-            repeats: true
-        ) { [weak self] _ in
-            self?.updateRandomPairs()
-        }
-    }
-
-    private func updateRandomPairs() {
-        guard !pairs.isEmpty else { return }
-
-        var updatedPairs = pairs
-        let updateCount = Int.random(in: 8...35)
-        var indexes = Set<Int>()
-
-        while indexes.count < updateCount {
-            indexes.insert(Int.random(in: updatedPairs.indices))
-        }
-
-        for index in indexes {
-            updatedPairs[index].previousValue = updatedPairs[index].value
-            updatedPairs[index].value = max(
-                0.0001,
-                updatedPairs[index].value * Double.random(in: 0.985...1.015)
-            )
-
-            updatedPairs[index].history.append(updatedPairs[index].value)
-            if updatedPairs[index].history.count > Self.maxHistoryCount {
-                let overflow = updatedPairs[index].history.count - Self.maxHistoryCount
-                updatedPairs[index].history.removeFirst(overflow)
-            }
-
-            updatedPairs[index].isRisky = Self.isRisky(history: updatedPairs[index].history)
-            updatedPairs[index].priceText = Self.priceFormatter.string(
-                from: NSNumber(value: updatedPairs[index].value)
-            ) ?? "\(updatedPairs[index].value)"
-        }
-
-        pairs = updatedPairs
-
-        let sortedIndexes = indexes.sorted { left, right in
-            updatedPairs[left].name < updatedPairs[right].name
-        }
-        lastUpdatedPairs = sortedIndexes
-            .prefix(Self.latestPairsCount)
-            .map { updatedPairs[$0] }
-
-        updateCycle += 1
-    }
-
-    private static func makePairs() -> [OptimizationCurrencyPair] {
-        (0..<pairsCount).map { _ in
-            var value = Double.random(in: 0.5...180)
-            var history: [Double] = []
-
-            for _ in 0..<120 {
-                value = max(0.0001, value * Double.random(in: 0.995...1.005))
-                history.append(value)
-            }
-
-            let priceText = priceFormatter.string(from: NSNumber(value: value)) ?? "\(value)"
-            return OptimizationCurrencyPair(
-                id: UUID(),
-                name: "\(randomCode())/\(randomCode())",
-                value: value,
-                previousValue: history.dropLast().last ?? value,
-                history: history,
-                isRisky: isRisky(history: history),
-                priceText: priceText
-            )
-        }
-        .sorted { $0.name < $1.name }
-    }
-
-    private static func randomCode() -> String {
-        let letters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-        return String((0..<3).compactMap { _ in letters.randomElement() })
-    }
-
-    private static func isRisky(history: [Double]) -> Bool {
-        guard history.count > 1 else { return false }
-
-        var returns: [Double] = []
-        returns.reserveCapacity(history.count - 1)
-
-        for index in 1..<history.count {
-            let previous = max(history[index - 1], 0.0001)
-            returns.append(log(history[index] / previous))
-        }
-
-        let average = returns.reduce(0, +) / Double(returns.count)
-        let variance = returns.reduce(0) { partialResult, value in
-            partialResult + pow(value - average, 2)
-        } / Double(returns.count)
-        let volatility = sqrt(variance) * sqrt(252)
-
-        let recent = history.suffix(14)
-        let maxPrice = recent.max() ?? 0
-        let minPrice = recent.min() ?? 0
-        let averagePrice = recent.reduce(0, +) / Double(max(recent.count, 1))
-        let rangePercent = averagePrice > 0 ? ((maxPrice - minPrice) / averagePrice) * 100 : 0
-
-        return volatility > 0.06 || rangePercent > 2.2
-    }
-
-    private static let priceFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 4
-        formatter.maximumFractionDigits = 6
-        return formatter
-    }()
+private enum OptimizationLayout {
+    static let horizontalPadding: CGFloat = 16
+    static let verticalPadding: CGFloat = 12
+    static let cardSpacing: CGFloat = 10
+    static let rowInnerSpacing: CGFloat = 12
+    static let cardCornerRadius: CGFloat = 14
+    static let borderWidth: CGFloat = 1
+    static let recentCardWidth: CGFloat = 150
+    static let rowVerticalInset: CGFloat = 8
 }
 
 // MARK: - Screen
 
 struct OptimizationCurrenciesView: View {
-    @StateObject private var store = OptimizationCurrencyPairsStore()
-    @State private var highlightRisk = false
+    @StateObject private var viewModel: OptimizationCurrenciesViewModel
 
-    var body: some View {
-        VStack(spacing: 0) {
-            headerBlock
-            pairsList
-        }
-        .background(OptimizationPalette.screen.ignoresSafeArea())
+    init(viewModel: OptimizationCurrenciesViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
-    private var headerBlock: some View {
+    var body: some View {
+        content
+            .background(OptimizationPalette.screen.ignoresSafeArea())
+            .onAppear {
+                viewModel.dispatch(.onAppear)
+            }
+            .onDisappear {
+                viewModel.dispatch(.onDisappear)
+            }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.state {
+        case .idle:
+            Color.clear
+        case .loading:
+            loadingContent
+        case .error(let message):
+            errorContent(message)
+        case .content(let state):
+            screenContent(state)
+        }
+    }
+
+    private var loadingContent: some View {
+        VStack(spacing: 12) {
+            Spacer()
+            ProgressView()
+                .tint(.white)
+            Text("Загрузка валют")
+                .font(.subheadline)
+                .foregroundColor(OptimizationPalette.textSecondary)
+            Spacer()
+        }
+    }
+
+    private func errorContent(_ message: String) -> some View {
+        VStack(spacing: 12) {
+            Spacer()
+            Text("Ошибка")
+                .font(.title3.bold())
+                .foregroundColor(.white)
+            Text(message)
+                .font(.subheadline)
+                .foregroundColor(OptimizationPalette.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+            Spacer()
+        }
+    }
+}
+
+private extension OptimizationCurrenciesView {
+    func screenContent(_ state: OptimizationCurrenciesContentState) -> some View {
         VStack(spacing: 0) {
-            Toggle("Подсвечивать рискованные пары", isOn: $highlightRisk)
-                .tint(.teal)
-                .foregroundColor(OptimizationPalette.textPrimary)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(OptimizationPalette.card)
+            headerBlock(state)
+            pairsList(state)
+        }
+    }
+
+    func headerBlock(_ state: OptimizationCurrenciesContentState) -> some View {
+        VStack(spacing: 0) {
+            Toggle(
+                "Подсвечивать рискованные пары",
+                isOn: Binding(
+                    get: { state.highlightRisk },
+                    set: { newValue in
+                        viewModel.dispatch(.highlightRiskChanged(newValue))
+                    }
+                )
+            )
+            .tint(.teal)
+            .foregroundColor(OptimizationPalette.textPrimary)
+            .padding(.horizontal, OptimizationLayout.horizontalPadding)
+            .padding(.vertical, OptimizationLayout.verticalPadding)
+            .background(OptimizationPalette.card)
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Последние обновления")
                     .font(.headline)
                     .foregroundColor(OptimizationPalette.textPrimary)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
+                    .padding(.horizontal, OptimizationLayout.horizontalPadding)
+                    .padding(.top, OptimizationLayout.verticalPadding)
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        ForEach(store.lastUpdatedPairs) { pair in
-                            OptimizationRecentPairCard(pair: pair, updateCycle: store.updateCycle)
+                    HStack(spacing: OptimizationLayout.cardSpacing) {
+                        ForEach(state.lastUpdatedPairs) { pair in
+                            OptimizationRecentPairCard(
+                                pair: pair,
+                                updateCycle: state.updateCycle
+                            )
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 12)
+                    .padding(.horizontal, OptimizationLayout.horizontalPadding)
+                    .padding(.bottom, OptimizationLayout.verticalPadding)
                 }
             }
             .background(OptimizationPalette.card)
         }
     }
 
-    private var pairsList: some View {
+    func pairsList(_ state: OptimizationCurrenciesContentState) -> some View {
         List {
-            ForEach(store.pairs) { pair in
-                OptimizationPairRow(pair: pair, highlightRisk: highlightRisk)
-                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            ForEach(state.pairs) { pair in
+                OptimizationPairRow(pair: pair, highlightRisk: state.highlightRisk)
+                    .listRowInsets(
+                        EdgeInsets(
+                            top: OptimizationLayout.rowVerticalInset,
+                            leading: OptimizationLayout.horizontalPadding,
+                            bottom: OptimizationLayout.rowVerticalInset,
+                            trailing: OptimizationLayout.horizontalPadding
+                        )
+                    )
                     .listRowSeparator(.hidden)
                     .listRowBackground(OptimizationPalette.screen)
             }
@@ -246,7 +171,7 @@ private struct OptimizationPairRow: View, Equatable {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: OptimizationLayout.rowInnerSpacing) {
             VStack(alignment: .leading, spacing: 8) {
                 Text(pair.name)
                     .font(.headline)
@@ -263,14 +188,14 @@ private struct OptimizationPairRow: View, Equatable {
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(pair.isGrowing ? .green : .red)
         }
-        .padding(12)
+        .padding(OptimizationLayout.verticalPadding)
         .background(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: OptimizationLayout.cardCornerRadius)
                 .fill(rowBackgroundColor)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(OptimizationPalette.border, lineWidth: 1)
+            RoundedRectangle(cornerRadius: OptimizationLayout.cardCornerRadius)
+                .stroke(OptimizationPalette.border, lineWidth: OptimizationLayout.borderWidth)
         )
     }
 
@@ -319,15 +244,15 @@ private struct OptimizationRecentPairCard: View, Equatable {
                 .font(.caption2)
                 .foregroundColor(OptimizationPalette.textSecondary.opacity(0.9))
         }
-        .frame(width: 150, alignment: .leading)
-        .padding(12)
+        .frame(width: OptimizationLayout.recentCardWidth, alignment: .leading)
+        .padding(OptimizationLayout.verticalPadding)
         .background(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: OptimizationLayout.cardCornerRadius)
                 .fill(OptimizationPalette.screen)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(OptimizationPalette.border, lineWidth: 1)
+            RoundedRectangle(cornerRadius: OptimizationLayout.cardCornerRadius)
+                .stroke(OptimizationPalette.border, lineWidth: OptimizationLayout.borderWidth)
         )
     }
 }

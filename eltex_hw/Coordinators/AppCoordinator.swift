@@ -34,14 +34,7 @@ final class AppCoordinator: Coordinator {
     private func showMainApplication() {
         let tabBarController = UITabBarController()
 
-        let chartsViewController = ChartsViewController()
-        chartsViewController.title = "График"
-        let chartsNavigationController = UINavigationController(rootViewController: chartsViewController)
-        chartsNavigationController.tabBarItem = UITabBarItem(
-            title: "График",
-            image: UIImage(systemName: "chart.bar.xaxis"),
-            tag: 0
-        )
+        let chartsNavigationController = makeChartsNavigationController()
 
         let tradeNavigationController = UINavigationController()
         tradeNavigationController.tabBarItem = UITabBarItem(
@@ -61,26 +54,9 @@ final class AppCoordinator: Coordinator {
         let p2pCoordinator = P2PCoordinator(navigationController: p2pNavigationController, wallet: sharedWallet)
         p2pCoordinator.start()
 
-        let optimizationViewController = UIHostingController(rootView: OptimizationCurrenciesView())
-        optimizationViewController.title = "Валюты"
-        let optimizationNavigationController = UINavigationController(rootViewController: optimizationViewController)
-        optimizationNavigationController.tabBarItem = UITabBarItem(
-            title: "Валюты",
-            image: UIImage(systemName: "speedometer"),
-            tag: 3
-        )
+        let optimizationNavigationController = makeOptimizationNavigationController()
 
-        let settingsViewController = SettingsViewController(authManager: authManager)
-        settingsViewController.title = "Настройки"
-        settingsViewController.onSignOutConfirmed = { [weak self] in
-            self?.showAuthScreen()
-        }
-        let settingsNavigationController = UINavigationController(rootViewController: settingsViewController)
-        settingsNavigationController.tabBarItem = UITabBarItem(
-            title: "Настройки",
-            image: UIImage(systemName: "gearshape"),
-            tag: 4
-        )
+        let settingsNavigationController = makeSettingsNavigationController()
 
         tabBarController.viewControllers = [
             chartsNavigationController,
@@ -117,5 +93,46 @@ final class AppCoordinator: Coordinator {
                 self.window.alpha = 1.0
             }
         }
+    }
+}
+
+private extension AppCoordinator {
+    func makeChartsNavigationController() -> UINavigationController {
+        let chartsViewController = ChartsViewController()
+        chartsViewController.title = "График"
+        let chartsNavigationController = UINavigationController(rootViewController: chartsViewController)
+        chartsNavigationController.tabBarItem = UITabBarItem(
+            title: "График",
+            image: UIImage(systemName: "chart.bar.xaxis"),
+            tag: 0
+        )
+        return chartsNavigationController
+    }
+
+    func makeOptimizationNavigationController() -> UINavigationController {
+        let optimizationViewController = OptimizationCurrenciesAssembly().makeViewController()
+        optimizationViewController.title = "Валюты"
+        let optimizationNavigationController = UINavigationController(rootViewController: optimizationViewController)
+        optimizationNavigationController.tabBarItem = UITabBarItem(
+            title: "Валюты",
+            image: UIImage(systemName: "speedometer"),
+            tag: 3
+        )
+        return optimizationNavigationController
+    }
+
+    func makeSettingsNavigationController() -> UINavigationController {
+        let settingsViewController = SettingsViewController(authManager: authManager)
+        settingsViewController.title = "Настройки"
+        settingsViewController.onSignOutConfirmed = { [weak self] in
+            self?.showAuthScreen()
+        }
+        let settingsNavigationController = UINavigationController(rootViewController: settingsViewController)
+        settingsNavigationController.tabBarItem = UITabBarItem(
+            title: "Настройки",
+            image: UIImage(systemName: "gearshape"),
+            tag: 4
+        )
+        return settingsNavigationController
     }
 }
